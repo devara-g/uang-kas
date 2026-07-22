@@ -238,39 +238,38 @@ export default async function RecapPage(props: PageProps) {
       </div>
 
       {/* Matrix Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden">
-        <div className="px-4 py-3 border-b border-zinc-200 flex items-center justify-between">
-          <p className="text-sm font-semibold text-zinc-900">
+      <div className="bg-white rounded-lg shadow-xs border border-zinc-200 overflow-hidden">
+        <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-zinc-200 flex items-center justify-between">
+          <p className="text-xs sm:text-sm font-semibold text-zinc-900">
             Detail per Bulan — {MONTHS_FULL[selectedMonth - 1]} {year}
           </p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-[11px] sm:text-xs text-zinc-500">
             {students?.length || 0} siswa
           </p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-max text-sm">
+          <table className="w-full border-collapse text-xs sm:text-sm">
             <thead>
               <tr className="bg-zinc-50 border-b border-zinc-200">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200" style={{ minWidth: 140 }}>
+                <th className="text-left px-2 py-2 sm:px-4 sm:py-3 text-[10px] sm:text-xs font-semibold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200 min-w-[90px] sm:min-w-[140px]">
                   Nama Siswa
                 </th>
                 {activeMonths.map(m => (
                   <th
                     key={m.value}
-                    className={`text-center px-2 py-3 text-xs font-semibold uppercase tracking-wider border-r border-zinc-100 last:border-0 ${
+                    className={`text-center px-0.5 py-1.5 sm:px-2 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider border-r border-zinc-100 last:border-0 min-w-[34px] sm:min-w-[52px] ${
                       m.value === selectedMonth ? 'text-zinc-900 bg-zinc-100' : 'text-zinc-500'
                     }`}
-                    style={{ minWidth: 52 }}
                   >
                     {m.label}
                     {m.value === selectedMonth && (
-                      <div className="w-1 h-1 bg-zinc-900 rounded-full mx-auto mt-1" />
+                      <div className="w-1 h-1 bg-zinc-900 rounded-full mx-auto mt-0.5" />
                     )}
                   </th>
                 ))}
                 {/* Total column */}
-                <th className="text-center px-3 py-3 text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 sticky right-0 z-10" style={{ minWidth: 100 }}>
-                  Total Terbayar
+                <th className="text-center px-1.5 py-1.5 sm:px-3 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 sticky right-0 z-10 min-w-[68px] sm:min-w-[100px]">
+                  Total
                 </th>
               </tr>
             </thead>
@@ -282,10 +281,10 @@ export default async function RecapPage(props: PageProps) {
                 return (
                   <tr key={student.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50 transition-colors">
                     <td
-                      className="px-4 py-2 sticky left-0 z-10 border-r border-zinc-200 bg-white group-hover:bg-zinc-50"
+                      className="px-2 py-1.5 sm:px-4 sm:py-2 sticky left-0 z-10 border-r border-zinc-200 bg-white group-hover:bg-zinc-50"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-zinc-900 truncate max-w-[120px]">{student.name}</span>
+                        <span className="font-medium text-xs sm:text-sm text-zinc-900 truncate max-w-[85px] sm:max-w-[120px]">{student.name}</span>
                       </div>
                     </td>
                     {activeMonths.map(m => {
@@ -311,9 +310,9 @@ export default async function RecapPage(props: PageProps) {
                       )
                     })}
                     {/* Total per student */}
-                    <td className="px-3 py-2 text-center border-l border-emerald-200 bg-emerald-50/30 sticky right-0 z-10">
-                      <span className={`text-xs font-semibold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-400'}`}>
-                        {totalAllMonths > 0 ? `Rp ${totalAllMonths.toLocaleString('id-ID')}` : '—'}
+                    <td className="px-1.5 py-1.5 sm:px-3 sm:py-2 text-center border-l border-emerald-200 bg-emerald-50/30 sticky right-0 z-10">
+                      <span className={`text-[11px] sm:text-xs font-semibold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-400'}`}>
+                        {totalAllMonths > 0 ? `Rp ${(totalAllMonths / 1000).toFixed(0)}k` : '—'}
                       </span>
                     </td>
                   </tr>
@@ -322,8 +321,8 @@ export default async function RecapPage(props: PageProps) {
               {/* Footer total row */}
               {students && students.length > 0 && (
                 <tr className="bg-zinc-50 border-t-2 border-zinc-200">
-                  <td className="px-4 py-2.5 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
-                    <span className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Total / Bulan</span>
+                  <td className="px-2 py-2 sm:px-4 sm:py-2.5 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
+                    <span className="text-[10px] sm:text-xs font-bold text-zinc-700 uppercase tracking-wider">Total</span>
                   </td>
                   {activeMonths.map(m => {
                     const monthTotal = students.reduce((sum, s) => {
@@ -332,19 +331,22 @@ export default async function RecapPage(props: PageProps) {
                     return (
                       <td
                         key={m.value}
-                        className={`border-r border-zinc-100 text-center py-2.5 px-1 ${
+                        className={`border-r border-zinc-100 text-center py-1.5 sm:py-2.5 px-0.5 ${
                           m.value === selectedMonth ? 'bg-zinc-100' : ''
                         }`}
                       >
-                        <span className={`text-[10px] font-semibold ${monthTotal > 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                        <span className={`text-[9px] sm:text-[10px] font-semibold ${monthTotal > 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
                           {monthTotal > 0 ? `${(monthTotal / 1000).toFixed(0)}k` : '—'}
                         </span>
                       </td>
                     )
                   })}
-                  <td className="px-3 py-2.5 text-center border-l border-emerald-200 bg-emerald-50 sticky right-0 z-10">
-                    <span className="text-xs font-bold text-emerald-800">
-                      Rp {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0).toLocaleString('id-ID')}
+                  <td className="px-1.5 py-2 sm:px-3 sm:py-2.5 text-center border-l border-emerald-200 bg-emerald-50 sticky right-0 z-10">
+                    <span className="text-[10px] sm:text-xs font-bold text-emerald-800">
+                      {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0) > 0 
+                        ? `Rp ${((payments?.reduce((sum, p) => sum + p.amount, 0) || 0) / 1000).toFixed(0)}k`
+                        : '—'
+                      }
                     </span>
                   </td>
                 </tr>

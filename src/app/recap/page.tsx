@@ -141,30 +141,30 @@ export default async function PublicRecapPage(props: PageProps) {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header Publik */}
-      <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-zinc-900 rounded-lg flex items-center justify-center text-white font-semibold shadow-sm">
-              <Wallet className="w-5 h-5" />
+      <header className="bg-white border-b border-zinc-200">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-zinc-900 rounded-lg flex items-center justify-center text-white font-semibold shadow-xs">
+              <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <span className="font-bold text-zinc-900 tracking-tight text-base block">Kas Kelas</span>
-              <span className="text-[10px] text-zinc-500 block -mt-1">Rekap Transparan Member</span>
+              <span className="font-bold text-zinc-900 tracking-tight text-sm sm:text-base block">Kas Kelas</span>
+              <span className="text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block -mt-1">Rekap Transparan Member</span>
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <Link
               href="/admin/qris"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
+              className="flex items-center gap-1 px-2 py-1.5 sm:px-3 text-[11px] sm:text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
             >
               <QrCode className="w-3.5 h-3.5" />
-              <span>QRIS Pembayaran</span>
+              <span>QRIS</span>
             </Link>
 
             <Link
               href="/login"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 text-[11px] sm:text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors"
             >
               <Lock className="w-3.5 h-3.5" />
               <span>Login Admin</span>
@@ -174,12 +174,12 @@ export default async function PublicRecapPage(props: PageProps) {
       </header>
 
       {/* Content Body */}
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex-1">
+      <main className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6 flex-1">
         {/* Title & Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Rekap Kas Anggota Class</h1>
-            <p className="text-sm text-zinc-500">Transparansi pembayaran uang kas siswa tahun {year}.</p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">Rekap Kas Anggota Class</h1>
+            <p className="text-xs sm:text-sm text-zinc-500">Transparansi pembayaran uang kas siswa tahun {year}.</p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -191,35 +191,35 @@ export default async function PublicRecapPage(props: PageProps) {
             />
 
             {/* Year Switcher */}
-            <div className="flex items-center bg-white border border-zinc-200 rounded-md p-1 shadow-sm">
+            <div className="flex items-center bg-white border border-zinc-200 rounded-md p-0.5 sm:p-1 shadow-xs">
               <Link
                 href={`/recap?year=${year - 1}&month=${selectedMonth}`}
-                className="p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
+                className="p-1 sm:p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Link>
-              <div className="px-4 py-1 text-sm font-medium text-zinc-900">
+              <div className="px-2.5 sm:px-4 py-0.5 text-xs sm:text-sm font-medium text-zinc-900">
                 {year}
               </div>
               <Link
                 href={`/recap?year=${year + 1}&month=${selectedMonth}`}
-                className="p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
+                className="p-1 sm:p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Link>
             </div>
           </div>
         </div>
 
         {/* Month Switcher */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1 sm:gap-1.5">
           {activeMonths.map(m => (
             <Link
               key={m.value}
               href={`/recap?year=${year}&month=${m.value}`}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md text-[11px] sm:text-xs font-medium transition-colors ${
                 m.value === selectedMonth
-                  ? 'bg-zinc-900 text-white shadow-sm'
+                  ? 'bg-zinc-900 text-white shadow-xs'
                   : 'bg-white border border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
               }`}
             >
@@ -232,7 +232,7 @@ export default async function PublicRecapPage(props: PageProps) {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800 space-y-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 text-xs text-amber-800 space-y-1">
           <p className="font-semibold text-amber-900">💡 Aturan Pembayaran Uang Kas:</p>
           <ul className="list-disc list-inside space-y-0.5 text-amber-700">
             <li>Bayar LUNAS sekaligus dalam 1 transaksi di bulan berjalan: <b>Rp 10.000</b>.</li>
@@ -244,72 +244,71 @@ export default async function PublicRecapPage(props: PageProps) {
         </div>
 
         {/* Summary bulan yang dipilih */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-zinc-200 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-emerald-600">
-              <Check className="w-4 h-4" />
-              <h3 className="text-xs font-medium uppercase tracking-wider">Lunas</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 text-emerald-600">
+              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Lunas</h3>
             </div>
-            <p className="text-2xl font-semibold text-zinc-900">{lunasCount}</p>
+            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{lunasCount}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-zinc-200 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-amber-600">
-              <Clock className="w-4 h-4" />
-              <h3 className="text-xs font-medium uppercase tracking-wider">Mencicil</h3>
+          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 text-amber-600">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Mencicil</h3>
             </div>
-            <p className="text-2xl font-semibold text-zinc-900">{cicilanCount}</p>
+            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{cicilanCount}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-zinc-200 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-red-600">
-              <X className="w-4 h-4" />
-              <h3 className="text-xs font-medium uppercase tracking-wider">Belum Bayar</h3>
+          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 text-red-600">
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Belum Bayar</h3>
             </div>
-            <p className="text-2xl font-semibold text-zinc-900">{belumBayarCount}</p>
+            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{belumBayarCount}</p>
           </div>
-          <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-emerald-700">
-              <h3 className="text-xs font-medium uppercase tracking-wider">Total Terkumpul</h3>
+          <div className="bg-emerald-50 rounded-lg p-3 sm:p-4 border border-emerald-200 shadow-xs flex flex-col gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 text-emerald-700">
+              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Total Terkumpul</h3>
             </div>
-            <p className="text-xl font-bold text-emerald-900">
+            <p className="text-lg sm:text-xl font-bold text-emerald-900">
               Rp {totalCollectedMonth.toLocaleString('id-ID')}
             </p>
-            <p className="text-[10px] text-emerald-600">
+            <p className="text-[9px] sm:text-[10px] text-emerald-600">
               {MONTHS_FULL[selectedMonth - 1]} {year}
             </p>
           </div>
         </div>
 
         {/* Matrix Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-zinc-200 flex items-center justify-between">
-            <p className="text-sm font-semibold text-zinc-900">
+        <div className="bg-white rounded-lg shadow-xs border border-zinc-200 overflow-hidden">
+          <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-zinc-200 flex items-center justify-between">
+            <p className="text-xs sm:text-sm font-semibold text-zinc-900">
               Detail per Bulan — {MONTHS_FULL[selectedMonth - 1]} {year}
             </p>
-            <p className="text-xs text-zinc-500">{students?.length || 0} siswa</p>
+            <p className="text-[11px] sm:text-xs text-zinc-500">{students?.length || 0} siswa</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-max text-sm">
+            <table className="w-full border-collapse text-xs sm:text-sm">
               <thead>
                 <tr className="bg-zinc-50 border-b border-zinc-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200" style={{ minWidth: 140 }}>
+                  <th className="text-left px-2 py-2 sm:px-4 sm:py-3 text-[10px] sm:text-xs font-semibold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200 min-w-[90px] sm:min-w-[140px]">
                     Nama Siswa
                   </th>
                   {activeMonths.map(m => (
                     <th
                       key={m.value}
-                      className={`text-center px-2 py-3 text-xs font-semibold uppercase tracking-wider border-r border-zinc-100 last:border-0 ${
+                      className={`text-center px-0.5 py-1.5 sm:px-2 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider border-r border-zinc-100 last:border-0 min-w-[34px] sm:min-w-[52px] ${
                         m.value === selectedMonth ? 'text-zinc-900 bg-zinc-100' : 'text-zinc-500'
                       }`}
-                      style={{ minWidth: 52 }}
                     >
                       {m.label}
                       {m.value === selectedMonth && (
-                        <div className="w-1 h-1 bg-zinc-900 rounded-full mx-auto mt-1" />
+                        <div className="w-1 h-1 bg-zinc-900 rounded-full mx-auto mt-0.5" />
                       )}
                     </th>
                   ))}
-                  <th className="text-center px-3 py-3 text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 sticky right-0 z-10" style={{ minWidth: 100 }}>
-                    Total Terbayar
+                  <th className="text-center px-1.5 py-1.5 sm:px-3 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 min-w-[68px] sm:min-w-[100px]">
+                    Total
                   </th>
                 </tr>
               </thead>
@@ -320,8 +319,10 @@ export default async function PublicRecapPage(props: PageProps) {
                   }, 0)
                   return (
                     <tr key={student.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50 transition-colors">
-                      <td className="px-4 py-2 sticky left-0 z-10 border-r border-zinc-200 bg-white">
-                        <span className="font-medium text-sm text-zinc-900 truncate max-w-[120px] block">{student.name}</span>
+                      <td className="px-2 py-1.5 sm:px-4 sm:py-2 sticky left-0 z-10 border-r border-zinc-200 bg-white">
+                        <span className="font-medium text-xs sm:text-sm text-zinc-900 truncate max-w-[85px] sm:max-w-[120px] block">
+                          {student.name}
+                        </span>
                       </td>
                       {activeMonths.map(m => {
                         const cell = matrix[student.id]?.[m.value]
@@ -345,9 +346,9 @@ export default async function PublicRecapPage(props: PageProps) {
                           </td>
                         )
                       })}
-                      <td className="px-3 py-2 text-center border-l border-emerald-200 bg-emerald-50/30 sticky right-0 z-10">
-                        <span className={`text-xs font-semibold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-400'}`}>
-                          {totalAllMonths > 0 ? `Rp ${totalAllMonths.toLocaleString('id-ID')}` : '—'}
+                      <td className="px-1.5 py-1.5 sm:px-3 sm:py-2 text-center border-l border-emerald-200 bg-emerald-50/30">
+                        <span className={`text-[11px] sm:text-xs font-semibold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-400'}`}>
+                          {totalAllMonths > 0 ? `Rp ${(totalAllMonths / 1000).toFixed(0)}k` : '—'}
                         </span>
                       </td>
                     </tr>
@@ -356,8 +357,8 @@ export default async function PublicRecapPage(props: PageProps) {
                 {/* Footer total row */}
                 {students && students.length > 0 && (
                   <tr className="bg-zinc-50 border-t-2 border-zinc-200">
-                    <td className="px-4 py-2.5 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
-                      <span className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Total / Bulan</span>
+                    <td className="px-2 py-2 sm:px-4 sm:py-2.5 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
+                      <span className="text-[10px] sm:text-xs font-bold text-zinc-700 uppercase tracking-wider">Total</span>
                     </td>
                     {activeMonths.map(m => {
                       const monthTotal = students.reduce((sum, s) => {
@@ -366,19 +367,22 @@ export default async function PublicRecapPage(props: PageProps) {
                       return (
                         <td
                           key={m.value}
-                          className={`border-r border-zinc-100 text-center py-2.5 px-1 ${
+                          className={`border-r border-zinc-100 text-center py-1.5 sm:py-2.5 px-0.5 ${
                             m.value === selectedMonth ? 'bg-zinc-100' : ''
                           }`}
                         >
-                          <span className={`text-[10px] font-semibold ${monthTotal > 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                          <span className={`text-[9px] sm:text-[10px] font-semibold ${monthTotal > 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
                             {monthTotal > 0 ? `${(monthTotal / 1000).toFixed(0)}k` : '—'}
                           </span>
                         </td>
                       )
                     })}
-                    <td className="px-3 py-2.5 text-center border-l border-emerald-200 bg-emerald-50 sticky right-0 z-10">
-                      <span className="text-xs font-bold text-emerald-800">
-                        Rp {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0).toLocaleString('id-ID')}
+                    <td className="px-1.5 py-2 sm:px-3 sm:py-2.5 text-center border-l border-emerald-200 bg-emerald-50">
+                      <span className="text-[10px] sm:text-xs font-bold text-emerald-800">
+                        {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0) > 0 
+                          ? `Rp ${((payments?.reduce((sum, p) => sum + p.amount, 0) || 0) / 1000).toFixed(0)}k`
+                          : '—'
+                        }
                       </span>
                     </td>
                   </tr>

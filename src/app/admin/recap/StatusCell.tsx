@@ -68,23 +68,23 @@ export default function StatusCell({
 
   const renderIcon = () => {
     if (status === 'belum_bayar') return (
-      <div className="w-5 h-5 rounded flex items-center justify-center bg-zinc-100 border border-zinc-200">
-        <X className="w-3 h-3 text-zinc-400" />
+      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-zinc-100 border border-zinc-200">
+        <X className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-400" />
       </div>
     )
     if (status === 'nunggak') return (
-      <div className="w-5 h-5 rounded flex items-center justify-center bg-red-100 border border-red-300">
-        <AlertTriangle className="w-3 h-3 text-red-600" />
+      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-red-100 border border-red-300">
+        <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />
       </div>
     )
     if (status === 'mencicil') return (
-      <div className="w-5 h-5 rounded flex items-center justify-center bg-amber-50 border border-amber-200">
-        <Clock className="w-3 h-3 text-amber-500" />
+      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-amber-50 border border-amber-200">
+        <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-500" />
       </div>
     )
     return (
-      <div className="w-5 h-5 rounded flex items-center justify-center bg-emerald-50 border border-emerald-200">
-        <Check className="w-3 h-3 text-emerald-600" />
+      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-emerald-50 border border-emerald-200">
+        <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600" />
       </div>
     )
   }
@@ -100,20 +100,20 @@ export default function StatusCell({
   return (
     <>
       <div 
-        className="relative group flex flex-col items-center justify-center w-full h-full py-1.5 cursor-pointer hover:bg-zinc-50 transition-colors"
+        className="relative group flex flex-col items-center justify-center w-full h-full py-1 sm:py-1.5 cursor-pointer hover:bg-zinc-50 transition-colors"
         onClick={() => setShowModal(true)}
       >
         {renderIcon()}
         {status === 'nunggak' && (
-          <span className="text-[10px] font-medium mt-1 text-red-700">20k</span>
+          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-red-700">20k</span>
         )}
         {status === 'mencicil' && (
-          <span className="text-[10px] font-medium mt-1 text-amber-700">
+          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-amber-700">
             {(totalPaid / 1000).toFixed(0)}k
           </span>
         )}
         {(status === 'lunas_sekaligus' || status === 'lunas_cicilan') && (
-          <span className="text-[10px] font-medium mt-1 text-emerald-700">
+          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-emerald-700">
             {target === 10000 ? '10k' : target === 15000 ? '15k' : '20k'}
           </span>
         )}

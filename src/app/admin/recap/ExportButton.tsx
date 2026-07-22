@@ -43,11 +43,11 @@ export default function ExportButton({ monthlyData, currentMonth, year }: Export
     <div className="relative">
       <button
         onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors shadow-sm"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] sm:text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors shadow-xs"
       >
-        <Download className="w-3.5 h-3.5" />
+        <Download className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         <span>Ekspor Excel</span>
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
@@ -56,7 +56,7 @@ export default function ExportButton({ monthlyData, currentMonth, year }: Export
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-1.5 z-50 bg-white border border-zinc-200 rounded-lg shadow-lg overflow-hidden min-w-[200px]">
+          <div className="absolute right-0 top-full mt-1.5 z-50 bg-white border border-zinc-200 rounded-lg shadow-lg overflow-hidden w-[220px] max-w-[calc(100vw-32px)]">
             <div className="px-3 py-2 bg-zinc-50 border-b border-zinc-100">
               <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Ekspor Excel (.xlsx)</p>
             </div>
