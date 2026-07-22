@@ -1,39 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #09090b;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Formal Utility Classes */
-@layer utilities {
-  .border-sharp {
-    border-radius: 6px; /* slightly rounded, sharp look */
-  }
-  
-  .shadow-sharp {
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  
-  .bg-surface {
-    background-color: #fafafa;
-  }
-  
-  .text-muted {
-    color: #71717a; /* zinc-500 */
-  }
-}
-
-/* Base resets for a cleaner look */
+/* Base resets for a crisp look */
 * {
-  border-color: #e4e4e7; /* zinc-200 for crisp borders everywhere */
+  border-color: #e4e4e7; /* zinc-200 */
 }
