@@ -11,19 +11,19 @@ export default function QrisPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">QRIS Payment</h1>
-        <p className="text-sm text-zinc-500">Scan this QR code to make a payment directly to the class account.</p>
+        <p className="text-sm text-zinc-500">Scan ini untuk pembayaran kas kelas.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Intruction Card */}
+        {/* Instruction Card */}
         <div className="bg-white p-6 rounded-lg border border-zinc-200 shadow-sm h-fit">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-zinc-100 rounded-md flex items-center justify-center border border-zinc-200">
               <QrCode className="w-5 h-5 text-zinc-700" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-zinc-900">How to Pay</h2>
-              <p className="text-xs text-zinc-500">Follow these steps carefully</p>
+              <h2 className="text-base font-semibold text-zinc-900">Cara Pembayaran</h2>
+              <p className="text-xs text-zinc-500">Ikuti langkah-langkah berikut</p>
             </div>
           </div>
 
@@ -34,8 +34,8 @@ export default function QrisPage() {
                 1
               </div>
               <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-md border border-zinc-200 bg-white">
-                <h3 className="font-semibold text-zinc-900 text-sm">Open Banking App</h3>
-                <p className="text-xs text-zinc-500 mt-1">Open your mobile banking or e-wallet application (Gopay, OVO, Dana, etc).</p>
+                <h3 className="font-semibold text-zinc-900 text-sm">Buka Aplikasi E-Wallet/Bank</h3>
+                <p className="text-xs text-zinc-500 mt-1">Buka aplikasi GoPay, OVO, Dana, ShopeePay, BCA, Mandiri, dll.</p>
               </div>
             </div>
             {/* Step 2 */}
@@ -45,7 +45,7 @@ export default function QrisPage() {
               </div>
               <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-md border border-zinc-200 bg-white">
                 <h3 className="font-semibold text-zinc-900 text-sm">Scan QRIS</h3>
-                <p className="text-xs text-zinc-500 mt-1">Select the scan QR menu and point your camera to the QR code on the right.</p>
+                <p className="text-xs text-zinc-500 mt-1">Pilih menu Scan QR dan arahkan kamera ke barcode QRIS.</p>
               </div>
             </div>
             {/* Step 3 */}
@@ -54,8 +54,8 @@ export default function QrisPage() {
                 3
               </div>
               <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-md border border-zinc-200 bg-white">
-                <h3 className="font-semibold text-zinc-900 text-sm">Confirm Amount</h3>
-                <p className="text-xs text-zinc-500 mt-1">Enter the exact amount (Rp 10.000 for full payment) and complete the transaction.</p>
+                <h3 className="font-semibold text-zinc-900 text-sm">Konfirmasi Nominal</h3>
+                <p className="text-xs text-zinc-500 mt-1">Masukkan nominal pembayaran (Rp 10.000) dan selesaikan transaksi.</p>
               </div>
             </div>
           </div>
@@ -74,12 +74,11 @@ export default function QrisPage() {
           </div>
           
           <div className="w-full max-w-[280px] aspect-square relative mb-6 rounded-md overflow-hidden border border-zinc-200 shadow-sm">
-            {/* Replace src with your actual QRIS image */}
             <Image
-              src="/qris-placeholder.png"
+              src="/qris.jpg"
               alt="QRIS Code"
               fill
-              className="object-cover"
+              className="object-contain bg-white"
             />
           </div>
           
@@ -89,8 +88,8 @@ export default function QrisPage() {
           </div>
           
           <a
-            href="/qris-placeholder.png"
-            download="QRIS_Kas_Kelas.png"
+            href="/qris.jpg"
+            download="QRIS_Kas_Kelas.jpg"
             className="mt-6 flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-sm font-medium rounded-md hover:bg-zinc-800 transition-colors"
           >
             <Download className="w-4 h-4" />
@@ -118,7 +117,7 @@ export default function QrisPage() {
           
           <div className="w-full max-w-[400px] aspect-square relative rounded-xl overflow-hidden border-2 border-zinc-200 shadow-2xl">
             <Image
-              src="/qris-placeholder.png"
+              src="/qris.jpg"
               alt="QRIS Code Fullscreen"
               fill
               className="object-contain bg-white"

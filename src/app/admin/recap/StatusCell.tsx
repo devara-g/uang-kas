@@ -10,19 +10,47 @@ interface StatusCellProps {
   count: number
   monthLabel: string
   studentName: string
+  firstPaymentDate?: string | null
+  lastPaymentDate?: string | null
 }
 
-export default function StatusCell({ totalPaid, count, monthLabel, studentName }: StatusCellProps) {
+export default function StatusCell({
+  totalPaid,
+  count,
+  monthLabel,
+  studentName,
+  firstPaymentDate,
+  lastPaymentDate,
+}: StatusCellProps) {
   const [showModal, setShowModal] = useState(false)
 
   let status: CellStatus = 'belum_bayar'
+  let target = 10000
+
   if (totalPaid > 0) {
-    if (count === 1 && totalPaid === 10000) status = 'lunas_sekaligus'
-    else if (totalPaid >= 15000) status = 'lunas_cicilan'
-    else status = 'mencicil'
+    if (count === 1 && totalPaid === 10000) {
+      status = 'lunas_sekaligus'
+      target = 10000
+    } else {
+      const firstDate = firstPaymentDate ? new Date(firstPaymentDate) : new Date()
+      const lastDate = lastPaymentDate ? new Date(lastPaymentDate) : new Date()
+      const durationDays = (lastDate.getTime() - firstDate.getTime()) / (1000 * 3600 * 24)
+      const daysSinceFirst = (Date.now() - firstDate.getTime()) / (1000 * 3600 * 24)
+
+      if (totalPaid >= 10000 && durationDays <= 7) {
+        status = 'lunas_cicilan'
+        target = 10000
+      } else if (totalPaid >= 15000) {
+        status = 'lunas_cicilan'
+        target = 15000
+      } else {
+        status = 'mencicil'
+        target = daysSinceFirst <= 7 ? 10000 : 15000
+      }
+    }
   }
 
-  const remaining = status === 'mencicil' ? 15000 - totalPaid : (status === 'belum_bayar' ? 10000 : 0)
+  const remaining = Math.max(0, target - totalPaid)
 
   const renderIcon = () => {
     if (status === 'belum_bayar') return (
@@ -44,9 +72,9 @@ export default function StatusCell({ totalPaid, count, monthLabel, studentName }
 
   const getStatusText = () => {
     if (status === 'belum_bayar') return 'Belum Bayar'
-    if (status === 'mencicil') return 'Sedang Mencicil'
-    if (status === 'lunas_sekaligus') return 'Lunas (10k)'
-    return 'Lunas Cicilan (15k)'
+    if (status === 'mencicil') return `Mencicil (Target Rp ${target.toLocaleString('id-ID')})`
+    if (status === 'lunas_sekaligus') return 'Lunas Sekaligus (10k)'
+    return `Lunas Cicilan (${target === 10000 ? '10k ≤ 1 mgg' : '15k > 1 mgg'})`
   }
 
   return (
@@ -63,7 +91,7 @@ export default function StatusCell({ totalPaid, count, monthLabel, studentName }
         )}
         {(status === 'lunas_sekaligus' || status === 'lunas_cicilan') && (
           <span className="text-[10px] font-medium mt-1 text-emerald-700">
-            {status === 'lunas_sekaligus' ? '10k' : '15k'}
+            {target === 10000 ? '10k' : '15k'}
           </span>
         )}
 
@@ -122,11 +150,15 @@ export default function StatusCell({ totalPaid, count, monthLabel, studentName }
               
               <div className="bg-zinc-50 rounded-md p-4 mt-2 border border-zinc-200">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-medium text-zinc-500">Paid Amount</span>
+                  <span className="text-xs font-medium text-zinc-500">Total Terbayar</span>
                   <span className="text-sm font-semibold text-zinc-900">Rp {totalPaid.toLocaleString('id-ID')}</span>
                 </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-medium text-zinc-500">Target Bayar</span>
+                  <span className="text-sm font-semibold text-zinc-900">Rp {target.toLocaleString('id-ID')}</span>
+                </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200">
-                  <span className="text-xs font-medium text-zinc-500">Remaining</span>
+                  <span className="text-xs font-medium text-zinc-500">Sisa Tagihan</span>
                   <span className="text-sm font-semibold text-zinc-900">Rp {remaining.toLocaleString('id-ID')}</span>
                 </div>
               </div>
@@ -136,7 +168,7 @@ export default function StatusCell({ totalPaid, count, monthLabel, studentName }
               onClick={() => setShowModal(false)}
               className="w-full mt-6 py-2 rounded-md text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 transition-colors"
             >
-              Close
+              Tutup
             </button>
           </div>
         </div>

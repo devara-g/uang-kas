@@ -20,24 +20,51 @@ export async function getPaymentStatus(
 
   const { data: history } = await supabase
     .from('payments')
-    .select('amount')
+    .select('amount, created_at, payment_date')
     .eq('student_id', student_id)
     .eq('month', month)
     .eq('year', year)
+    .order('created_at', { ascending: true })
 
   const paymentCount = history?.length || 0
   const totalPaid = history?.reduce((acc, curr) => acc + curr.amount, 0) || 0
 
-  if (totalPaid === 0) {
+  if (totalPaid === 0 || !history || history.length === 0) {
     return { status: 'belum_bayar', totalPaid: 0, paymentCount: 0, remaining: 10000, target: 10000 }
   }
+
+  const firstDate = new Date(history[0].created_at || history[0].payment_date || Date.now())
+  const lastDate = new Date(history[history.length - 1].created_at || history[history.length - 1].payment_date || Date.now())
+  const now = new Date()
+
+  // Durasi antara cicilan pertama dan terakhir (dalam hari)
+  const durationDays = (lastDate.getTime() - firstDate.getTime()) / (1000 * 3600 * 24)
+  const daysSinceFirst = (now.getTime() - firstDate.getTime()) / (1000 * 3600 * 24)
+
   if (paymentCount === 1 && totalPaid === 10000) {
     return { status: 'lunas_sekaligus', totalPaid: 10000, paymentCount, remaining: 0, target: 10000 }
   }
+
+  // Aturan cicilan 1 minggu: jika lunas (totalPaid >= 10k) dalam kurun waktu <= 7 hari dari cicilan pertama, targetnya 10k
+  if (totalPaid >= 10000 && durationDays <= 7) {
+    return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target: 10000 }
+  }
+
   if (totalPaid >= 15000) {
     return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target: 15000 }
   }
-  return { status: 'mencicil', totalPaid, paymentCount, remaining: 15000 - totalPaid, target: 15000 }
+
+  // Jika belum lunas:
+  // Jika kurang dari / sama dengan 7 hari sejak cicilan pertama -> target 10.000
+  // Jika lebih dari 7 hari sejak cicilan pertama -> target naik jadi 15.000
+  const target = daysSinceFirst <= 7 ? 10000 : 15000
+  const remaining = Math.max(0, target - totalPaid)
+
+  if (remaining === 0) {
+    return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target }
+  }
+
+  return { status: 'mencicil', totalPaid, paymentCount, remaining, target }
 }
 
 export async function addPayment(formData: FormData) {
@@ -86,6 +113,40 @@ export async function addPayment(formData: FormData) {
 
   revalidatePath('/admin/payments')
   revalidatePath('/admin/recap')
+  revalidatePath('/recap')
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function updatePayment(id: string, amount: number, month: number, year: number) {
+  const supabase = await createClient()
+
+  if (amount <= 0) return { error: 'Nominal harus lebih dari 0' }
+
+  const { error } = await supabase
+    .from('payments')
+    .update({ amount, month, year })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin/payments')
+  revalidatePath('/admin/recap')
+  revalidatePath('/recap')
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deletePayment(id: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.from('payments').delete().eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin/payments')
+  revalidatePath('/admin/recap')
+  revalidatePath('/recap')
   revalidatePath('/admin')
   return { success: true }
 }

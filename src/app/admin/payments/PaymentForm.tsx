@@ -29,7 +29,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
         <AlertCircle className="w-4 h-4 text-red-600 mt-0.5" />
         <div>
           <p className="text-sm font-semibold text-red-700">Belum Bayar</p>
-          <p className="text-xs text-red-600 mt-0.5">Bayar Rp 10.000 (lunas) atau kurang (cicilan, total 15k).</p>
+          <p className="text-xs text-red-600 mt-0.5">Target Rp 10.000 jika lunas ≤ 1 minggu. Jika lebih dari  1 minggu target Rp 15.000.</p>
         </div>
       </div>
     )
@@ -41,7 +41,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
         <div>
           <p className="text-sm font-semibold text-amber-700">Sedang Mencicil</p>
           <p className="text-xs text-amber-600 mt-0.5">
-            Sudah dibayar: Rp {status.totalPaid.toLocaleString('id-ID')} • Sisa tagihan: Rp {status.remaining.toLocaleString('id-ID')}
+            Terbayar: Rp {status.totalPaid.toLocaleString('id-ID')} • Target ({status.target === 10000 ? '≤ 1 minggu' : '> 1 minggu'}): Rp {status.target.toLocaleString('id-ID')} • Sisa: Rp {status.remaining.toLocaleString('id-ID')}
           </p>
         </div>
       </div>
@@ -53,7 +53,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
       <div>
         <p className="text-sm font-semibold text-emerald-700">Lunas</p>
         <p className="text-xs text-emerald-600 mt-0.5">
-          {status.status === 'lunas_sekaligus' ? 'Dibayar sekaligus Rp 10.000.' : `Cicilan lunas Rp ${status.totalPaid.toLocaleString('id-ID')}.`}
+          {status.status === 'lunas_sekaligus' ? 'Dibayar sekaligus Rp 10.000.' : `Lunas cicilan Rp ${status.totalPaid.toLocaleString('id-ID')}.`}
         </p>
       </div>
     </div>

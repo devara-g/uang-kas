@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
-import { addStudent, deleteStudent } from '@/app/actions/student'
-import { Trash2, Plus, Users } from 'lucide-react'
+import { addStudent } from '@/app/actions/student'
+import { Plus } from 'lucide-react'
+import StudentList from './StudentList'
 
 export default async function StudentsPage() {
   const supabase = await createClient()
@@ -43,52 +44,8 @@ export default async function StudentsPage() {
           </form>
         </div>
 
-        {/* Daftar Siswa */}
-        <div className="lg:col-span-2 bg-white rounded-lg border border-zinc-200 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-sm font-semibold text-zinc-900">Student Directory</h2>
-            </div>
-            <span className="text-xs font-medium bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded-full">
-              {students?.length || 0} students
-            </span>
-          </div>
-
-          {(!students || students.length === 0) ? (
-            <div className="py-12 text-center flex flex-col items-center">
-              <Users className="w-8 h-8 text-zinc-300 mb-3" />
-              <p className="text-sm font-medium text-zinc-500">No students found</p>
-              <p className="text-xs text-zinc-400 mt-1">Add a student using the form to get started.</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-zinc-100">
-              {students.map((student, index) => (
-                <div key={student.id} className="flex items-center px-5 py-3 hover:bg-zinc-50 transition-colors group">
-                  <span className="text-xs font-medium text-zinc-400 w-8">{index + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-zinc-900 truncate">{student.name}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">
-                      Added {new Date(student.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </p>
-                  </div>
-                  <form action={async () => {
-                    'use server'
-                    void await deleteStudent(student.id)
-                  }}>
-                    <button
-                      type="submit"
-                      className="opacity-0 group-hover:opacity-100 p-2 rounded-md hover:bg-red-50 text-zinc-400 hover:text-red-600 transition-all"
-                      title="Delete student"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </form>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Daftar Siswa Client Component */}
+        <StudentList students={students} />
       </div>
     </div>
   )

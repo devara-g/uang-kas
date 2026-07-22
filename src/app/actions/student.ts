@@ -21,6 +21,26 @@ export async function addStudent(formData: FormData) {
   return { success: true }
 }
 
+export async function updateStudent(id: string, name: string) {
+  const supabase = await createClient()
+
+  if (!name.trim()) return { error: 'Nama tidak boleh kosong' }
+
+  const { error } = await supabase
+    .from('students')
+    .update({ name })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin/students')
+  revalidatePath('/admin/payments')
+  revalidatePath('/admin/recap')
+  revalidatePath('/recap')
+  revalidatePath('/')
+  return { success: true }
+}
+
 export async function deleteStudent(id: string) {
   const supabase = await createClient()
   
@@ -30,6 +50,8 @@ export async function deleteStudent(id: string) {
 
   revalidatePath('/admin/students')
   revalidatePath('/admin/payments')
+  revalidatePath('/admin/recap')
+  revalidatePath('/recap')
   revalidatePath('/')
   return { success: true }
 }
