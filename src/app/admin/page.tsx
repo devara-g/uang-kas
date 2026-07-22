@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { Users, CreditCard, Clock, CheckCircle2 } from 'lucide-react'
+import IncomeLineChart from './IncomeLineChart'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -18,7 +19,7 @@ export default async function AdminDashboard() {
 
   // Hitung status bulan ini per siswa
   const paymentStatus: Record<string, { totalPaid: number, count: number }> = {}
-  
+
   payments?.forEach(p => {
     if (p.month === currentMonth) {
       if (!paymentStatus[p.student_id]) {
@@ -37,27 +38,23 @@ export default async function AdminDashboard() {
     }
   })
 
-  // Data grafik bulanan (6 bulan terakhir)
+  // Data grafik bulanan (2026: Agustus - Desember; Tahun lain: Jan - Des)
+  const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+  const startMonth = currentYear === 2026 ? 8 : 1
   const monthlyData = []
-  for (let i = 5; i >= 0; i--) {
-    let m = currentMonth - i
-    let y = currentYear
-    if (m <= 0) {
-      m += 12
-      y -= 1
-    }
-    const monthName = new Date(y, m - 1, 1).toLocaleDateString('id-ID', { month: 'short' })
+
+  for (let m = startMonth; m <= 12; m++) {
     let totalMasuk = 0
-    // Karena kita cuma ambil payments tahun ini, grafik mungkin tidak akurat kalau nyebrang tahun,
-    // tapi demi kesederhanaan kita filter dari `payments` saja (asumsi tahun ini).
     payments?.filter(p => p.month === m).forEach(p => {
       totalMasuk += p.amount
     })
-    
-    monthlyData.push({ name: monthName, total: totalMasuk })
+
+    monthlyData.push({
+      month: m,
+      name: MONTHS_SHORT[m - 1],
+      total: totalMasuk,
+    })
   }
-  
-  const maxAmount = Math.max(...monthlyData.map(d => d.total), 100000)
 
   return (
     <div className="space-y-6">
@@ -111,29 +108,9 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart */}
-        <div className="lg:col-span-2 bg-white rounded-lg border border-zinc-200 shadow-sm overflow-hidden">
-          <div className="p-5 border-b border-zinc-200">
-            <h2 className="text-sm font-semibold text-zinc-900">Pemasukan 6 Bulan Terakhir</h2>
-          </div>
-          <div className="p-5 h-[300px] flex items-end gap-2 pb-8">
-            {monthlyData.map((data, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-2 group">
-                <div className="w-full relative flex items-end justify-center h-[200px]">
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-900 text-white text-xs py-1 px-2 rounded font-medium pointer-events-none whitespace-nowrap z-10">
-                    Rp {data.total.toLocaleString('id-ID')}
-                  </div>
-                  {/* Bar */}
-                  <div 
-                    className="w-full max-w-[40px] bg-zinc-900 rounded-t-sm transition-all duration-500 group-hover:bg-zinc-700"
-                    style={{ height: `${Math.max((data.total / maxAmount) * 100, 2)}%` }}
-                  />
-                </div>
-                <span className="text-xs font-medium text-zinc-500">{data.name}</span>
-              </div>
-            ))}
-          </div>
+        {/* Line Chart Component */}
+        <div className="lg:col-span-2">
+          <IncomeLineChart data={monthlyData} year={currentYear} />
         </div>
 
         {/* Recent Transactions */}

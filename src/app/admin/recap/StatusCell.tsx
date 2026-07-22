@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Clock, X } from 'lucide-react'
+import { Check, Clock, X, AlertTriangle } from 'lucide-react'
 
-type CellStatus = 'lunas_sekaligus' | 'lunas_cicilan' | 'mencicil' | 'belum_bayar'
+type CellStatus = 'lunas_sekaligus' | 'lunas_cicilan' | 'mencicil' | 'belum_bayar' | 'nunggak'
 
 interface StatusCellProps {
   totalPaid: number
@@ -12,6 +12,7 @@ interface StatusCellProps {
   studentName: string
   firstPaymentDate?: string | null
   lastPaymentDate?: string | null
+  isPastMonth?: boolean
 }
 
 export default function StatusCell({
@@ -21,6 +22,7 @@ export default function StatusCell({
   studentName,
   firstPaymentDate,
   lastPaymentDate,
+  isPastMonth = false,
 }: StatusCellProps) {
   const [showModal, setShowModal] = useState(false)
 
@@ -40,6 +42,9 @@ export default function StatusCell({
       if (totalPaid >= 10000 && durationDays <= 7) {
         status = 'lunas_cicilan'
         target = 10000
+      } else if (totalPaid >= 20000) {
+        status = 'lunas_cicilan'
+        target = 20000
       } else if (totalPaid >= 15000) {
         status = 'lunas_cicilan'
         target = 15000
@@ -47,6 +52,15 @@ export default function StatusCell({
         status = 'mencicil'
         target = daysSinceFirst <= 7 ? 10000 : 15000
       }
+    }
+  } else {
+    // Cek apakah bulan sudah lewat (nunggak)
+    // monthLabel format: "Jul 2026" — kita perlu tahu apakah month ini sudah lewat
+    // Cara paling simpel: cek via prop isPastMonth yang bisa kita tambah
+    // Untuk sementara gunakan flag dari prop
+    if (isPastMonth) {
+      status = 'nunggak'
+      target = 20000
     }
   }
 
@@ -56,6 +70,11 @@ export default function StatusCell({
     if (status === 'belum_bayar') return (
       <div className="w-5 h-5 rounded flex items-center justify-center bg-zinc-100 border border-zinc-200">
         <X className="w-3 h-3 text-zinc-400" />
+      </div>
+    )
+    if (status === 'nunggak') return (
+      <div className="w-5 h-5 rounded flex items-center justify-center bg-red-100 border border-red-300">
+        <AlertTriangle className="w-3 h-3 text-red-600" />
       </div>
     )
     if (status === 'mencicil') return (
@@ -72,9 +91,10 @@ export default function StatusCell({
 
   const getStatusText = () => {
     if (status === 'belum_bayar') return 'Belum Bayar'
+    if (status === 'nunggak') return 'Nunggak (20k)'
     if (status === 'mencicil') return `Mencicil (Target Rp ${target.toLocaleString('id-ID')})`
     if (status === 'lunas_sekaligus') return 'Lunas Sekaligus (10k)'
-    return `Lunas Cicilan (${target === 10000 ? '10k ≤ 1 mgg' : '15k > 1 mgg'})`
+    return `Lunas Cicilan (${target === 10000 ? '10k ≤ 1 mgg' : target === 15000 ? '15k > 1 mgg' : '20k nunggak'})`
   }
 
   return (
@@ -84,6 +104,9 @@ export default function StatusCell({
         onClick={() => setShowModal(true)}
       >
         {renderIcon()}
+        {status === 'nunggak' && (
+          <span className="text-[10px] font-medium mt-1 text-red-700">20k</span>
+        )}
         {status === 'mencicil' && (
           <span className="text-[10px] font-medium mt-1 text-amber-700">
             {(totalPaid / 1000).toFixed(0)}k
@@ -91,7 +114,7 @@ export default function StatusCell({
         )}
         {(status === 'lunas_sekaligus' || status === 'lunas_cicilan') && (
           <span className="text-[10px] font-medium mt-1 text-emerald-700">
-            {target === 10000 ? '10k' : '15k'}
+            {target === 10000 ? '10k' : target === 15000 ? '15k' : '20k'}
           </span>
         )}
 
@@ -101,6 +124,7 @@ export default function StatusCell({
             <span className="font-medium text-zinc-300 mb-1">{studentName} - {monthLabel}</span>
             <span className="font-semibold text-white">{getStatusText()}</span>
             {status === 'mencicil' && <span className="text-amber-400 mt-0.5">Sisa: Rp {remaining.toLocaleString('id-ID')}</span>}
+            {status === 'nunggak' && <span className="text-red-400 mt-0.5">Nunggak! Target: Rp 20.000</span>}
             {status === 'belum_bayar' && <span className="text-zinc-400 mt-0.5">Target: Rp 10.000</span>}
             
             {/* Tooltip Arrow */}
@@ -141,7 +165,8 @@ export default function StatusCell({
               <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
                 <span className="text-xs font-medium text-zinc-500">Status</span>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-md border ${
-                  status === 'belum_bayar' ? 'bg-red-50 text-red-700 border-red-200' : 
+                  status === 'belum_bayar' ? 'bg-zinc-100 text-zinc-600 border-zinc-200' :
+                  status === 'nunggak' ? 'bg-red-100 text-red-700 border-red-300' :
                   (status === 'mencicil' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')
                 }`}>
                   {getStatusText()}

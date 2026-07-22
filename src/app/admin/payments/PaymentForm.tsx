@@ -162,7 +162,7 @@ export default function PaymentForm({ students }: { students: Student[] | null }
               required
               className="w-full px-3 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors"
             >
-              {MONTHS.map(m => (
+              {MONTHS.filter(m => year !== 2026 || m.value >= 8).map(m => (
                 <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>

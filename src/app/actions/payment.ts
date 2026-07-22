@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export type PaymentStatus = {
-  status: 'belum_bayar' | 'mencicil' | 'lunas_sekaligus' | 'lunas_cicilan'
+  status: 'belum_bayar' | 'nunggak' | 'mencicil' | 'lunas_sekaligus' | 'lunas_cicilan'
   totalPaid: number
   paymentCount: number
   remaining: number
@@ -29,13 +29,23 @@ export async function getPaymentStatus(
   const paymentCount = history?.length || 0
   const totalPaid = history?.reduce((acc, curr) => acc + curr.amount, 0) || 0
 
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() + 1
+
+  // Cek apakah bulan ini sudah lewat (nunggak)
+  const isPastMonth = year < currentYear || (year === currentYear && month < currentMonth)
+
   if (totalPaid === 0 || !history || history.length === 0) {
+    if (isPastMonth) {
+      // Nunggak: bulan sudah lewat tapi belum bayar sama sekali → tagihan 20k
+      return { status: 'nunggak', totalPaid: 0, paymentCount: 0, remaining: 20000, target: 20000 }
+    }
     return { status: 'belum_bayar', totalPaid: 0, paymentCount: 0, remaining: 10000, target: 10000 }
   }
 
   const firstDate = new Date(history[0].created_at || history[0].payment_date || Date.now())
   const lastDate = new Date(history[history.length - 1].created_at || history[history.length - 1].payment_date || Date.now())
-  const now = new Date()
 
   // Durasi antara cicilan pertama dan terakhir (dalam hari)
   const durationDays = (lastDate.getTime() - firstDate.getTime()) / (1000 * 3600 * 24)
@@ -45,19 +55,24 @@ export async function getPaymentStatus(
     return { status: 'lunas_sekaligus', totalPaid: 10000, paymentCount, remaining: 0, target: 10000 }
   }
 
-  // Aturan cicilan 1 minggu: jika lunas (totalPaid >= 10k) dalam kurun waktu <= 7 hari dari cicilan pertama, targetnya 10k
+  // Aturan cicilan 1 minggu: jika lunas (totalPaid >= 10k) dalam <= 7 hari, targetnya 10k
   if (totalPaid >= 10000 && durationDays <= 7) {
     return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target: 10000 }
   }
 
-  if (totalPaid >= 15000) {
+  if (totalPaid >= 20000) {
+    return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target: 20000 }
+  }
+
+  if (totalPaid >= 15000 && !isPastMonth) {
     return { status: 'lunas_cicilan', totalPaid, paymentCount, remaining: 0, target: 15000 }
   }
 
-  // Jika belum lunas:
-  // Jika kurang dari / sama dengan 7 hari sejak cicilan pertama -> target 10.000
-  // Jika lebih dari 7 hari sejak cicilan pertama -> target naik jadi 15.000
-  const target = daysSinceFirst <= 7 ? 10000 : 15000
+  // Belum lunas:
+  // - Bulan lalu (nunggak) → target 20k
+  // - Bulan ini ≤ 7 hari → target 10k
+  // - Bulan ini > 7 hari → target 15k
+  const target = isPastMonth ? 20000 : (daysSinceFirst <= 7 ? 10000 : 15000)
   const remaining = Math.max(0, target - totalPaid)
 
   if (remaining === 0) {
@@ -89,14 +104,14 @@ export async function addPayment(formData: FormData) {
     return { error: 'Bulan ini sudah LUNAS. Tidak perlu bayar lagi.' }
   }
 
-  if (status.status === 'belum_bayar') {
-    if (amount > 15000) {
-      return { error: 'Nominal maksimal adalah Rp 15.000' }
+  if (status.status === 'belum_bayar' || status.status === 'nunggak') {
+    if (amount > status.target) {
+      return { error: `Nominal maksimal adalah Rp ${status.target.toLocaleString('id-ID')}` }
     }
   } else {
     // mencicil
     if (amount > status.remaining) {
-      return { error: `Sisa tagihan bulan ini hanya Rp ${status.remaining.toLocaleString('id-ID')}` }
+      return { error: `Sisa tagihan hanya Rp ${status.remaining.toLocaleString('id-ID')}` }
     }
   }
 

@@ -10,7 +10,8 @@ import {
   QrCode,
   LogOut,
   Menu,
-  X
+  X,
+  History
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -18,7 +19,8 @@ import { createClient } from '@/utils/supabase/client'
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/students', label: 'Students', icon: Users },
-  { href: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { href: '/admin/payments', label: 'Payments', icon: CreditCard, exact: true },
+  { href: '/admin/payments/transactions', label: 'Transactions', icon: History },
   { href: '/admin/recap', label: 'Recap', icon: TableProperties },
   { href: '/admin/qris', label: 'QRIS', icon: QrCode },
 ]
