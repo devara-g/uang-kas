@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { login } from './actions'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle, Loader2, Users, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -81,6 +82,19 @@ export default function LoginPage() {
                 ) : 'Sign in'}
               </button>
             </form>
+
+            {/* Divider & Murid Recap Link */}
+            <div className="mt-5 pt-4 border-t border-zinc-100 space-y-2">
+              <p className="text-xs text-center text-zinc-400">Bukan admin?</p>
+              <Link
+                href="/recap"
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 hover:text-zinc-900 transition-colors"
+              >
+                <Users className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Lihat Rekap Kas sebagai Murid</span>
+                <ArrowRight className="w-3.5 h-3.5 text-zinc-400" />
+              </Link>
+            </div>
           </div>
         </div>
 
