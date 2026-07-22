@@ -80,7 +80,7 @@ export default function StudentList({ students }: { students: Student[] | null }
                   Added {new Date(student.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => handleOpenEdit(student)}
                   className="p-2 rounded-md hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 transition-colors"
@@ -108,7 +108,7 @@ export default function StudentList({ students }: { students: Student[] | null }
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg border border-zinc-200">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-zinc-900 text-sm">Edit Siswa</h3>
-              <button onClick={handleCloseEdit} className="p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600">
+              <button onClick={handleCloseEdit} className="p-1 rounded-lg bg-zinc-100 text-zinc-400">
                 <X className="w-4 h-4" />
               </button>
             </div>

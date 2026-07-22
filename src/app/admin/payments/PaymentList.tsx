@@ -117,7 +117,7 @@ export default function PaymentList({ payments }: { payments: PaymentItem[] | nu
                       {new Date(payment.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleOpenEdit(payment)}
                       className="p-1.5 rounded-md hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 transition-colors"
