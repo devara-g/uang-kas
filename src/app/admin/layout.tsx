@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { 
   LayoutDashboard, 
   Users, 
@@ -11,7 +12,8 @@ import {
   LogOut,
   Menu,
   X,
-  History
+  History,
+  TrendingDown,
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -22,17 +24,31 @@ const navItems = [
   { href: '/admin/payments', label: 'Bayar', icon: CreditCard, exact: true },
   { href: '/admin/payments/transactions', label: 'Riwayat', icon: History },
   { href: '/admin/recap', label: 'Rekap', icon: TableProperties },
+  { href: '/admin/expenses', label: 'Pengeluaran', icon: TrendingDown },
   { href: '/admin/qris', label: 'QRIS', icon: QrCode },
 ]
 
-// Bottom nav only shows 5 items max
+// Bottom nav shows 5 items max
 const bottomNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/students', label: 'Siswa', icon: Users },
   { href: '/admin/payments', label: 'Bayar', icon: CreditCard, exact: true },
   { href: '/admin/recap', label: 'Rekap', icon: TableProperties },
+  { href: '/admin/expenses', label: 'Keluar', icon: TrendingDown },
   { href: '/admin/qris', label: 'QRIS', icon: QrCode },
 ]
+
+function LogoMark({ size = 28 }: { size?: number }) {
+  return (
+    <Image
+      src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
+      alt="PPLG 1 AREA"
+      width={size}
+      height={size}
+      className="rounded-full object-cover"
+      style={{ width: size, height: size }}
+    />
+  )
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -71,10 +87,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="h-14 flex items-center justify-between px-5 border-b border-zinc-100">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-xs">K</span>
+            <LogoMark size={32} />
+            <div className="leading-tight">
+              <span className="font-bold text-zinc-900 text-sm tracking-tight block">PPLG 1 AREA</span>
+              <span className="text-[10px] text-zinc-400 font-medium">Kas Kelas</span>
             </div>
-            <span className="font-bold text-zinc-900 text-sm tracking-tight">KasAdmin</span>
           </div>
           <button
             onClick={() => setMobileOpen(false)}
@@ -127,10 +144,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Mobile Top Header */}
         <header className="h-14 bg-white border-b border-zinc-200/80 flex items-center justify-between px-4 md:hidden sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-xs">K</span>
+            <LogoMark size={30} />
+            <div className="leading-tight">
+              <span className="font-bold text-zinc-900 text-sm block">PPLG 1 AREA</span>
+              <span className="text-[10px] text-zinc-400">Kas Kelas</span>
             </div>
-            <span className="font-bold text-zinc-900 text-sm">KasAdmin</span>
           </div>
           <button
             onClick={() => setMobileOpen(true)}

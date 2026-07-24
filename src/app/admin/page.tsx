@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { Users, CreditCard, Clock, CheckCircle2 } from 'lucide-react'
+import { Users, CreditCard, Clock, CheckCircle2, Calendar } from 'lucide-react'
 import IncomeLineChart from './IncomeLineChart'
 
 export default async function AdminDashboard() {
@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       {isBeforeStart && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-4 py-3 text-sm">
-          <span className="text-base leading-none mt-0.5">🗓️</span>
+          <Calendar className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
           <p>Sistem kas mulai aktif <strong>Agustus {currentYear}</strong>. Data pembayaran akan muncul setelah periode dimulai.</p>
         </div>
       )}

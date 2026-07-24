@@ -45,3 +45,33 @@ CREATE POLICY "Authenticated users can update payments."
 ON public.payments FOR UPDATE TO authenticated USING (true);
 CREATE POLICY "Authenticated users can delete payments."
 ON public.payments FOR DELETE TO authenticated USING (true);
+
+-- Create expenses table
+CREATE TABLE public.expenses (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
+    year INTEGER NOT NULL,
+    note TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS for expenses
+ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
+
+-- Expenses policies
+CREATE POLICY "Expenses are viewable by everyone."
+ON public.expenses FOR SELECT
+USING ( true );
+
+CREATE POLICY "Authenticated users can insert expenses."
+ON public.expenses FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can update expenses."
+ON public.expenses FOR UPDATE TO authenticated USING (true);
+
+CREATE POLICY "Authenticated users can delete expenses."
+ON public.expenses FOR DELETE TO authenticated USING (true);
+

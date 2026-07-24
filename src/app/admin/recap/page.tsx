@@ -1,8 +1,9 @@
 import { createClient } from '@/utils/supabase/server'
-import { Check, Clock, X, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react'
+import { Check, Clock, X, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Wallet, Receipt, Tag } from 'lucide-react'
 import Link from 'next/link'
 import StatusCell from './StatusCell'
 import ExportButton from './ExportButton'
+import { EXPENSE_CATEGORIES } from '@/constants/expense'
 
 const MONTHS = [
   { value: 1, label: 'Jan' },
@@ -80,6 +81,7 @@ export default async function RecapPage(props: PageProps) {
 
   const { data: students } = await supabase.from('students').select('*').order('name', { ascending: true })
   const { data: payments } = await supabase.from('payments').select('*').eq('year', year).order('created_at', { ascending: true })
+  const { data: expenses } = await supabase.from('expenses').select('*').eq('year', year).order('created_at', { ascending: false })
 
   // Build full matrix
   const matrix: Record<string, Record<number, MatrixCell>> = {}
@@ -114,6 +116,11 @@ export default async function RecapPage(props: PageProps) {
     else if (status === 'mencicil') cicilanCount++
     else lunasCount++
   })
+
+  // Calculate expenses for selected month
+  const currentMonthExpenses = expenses?.filter(e => e.month === selectedMonth) || []
+  const totalExpensesMonth = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const saldoBersihMonth = totalCollectedMonth - totalExpensesMonth
 
   const totalStudents = students?.length || 0
   const lunasPercent = totalStudents > 0 ? Math.round((lunasCount / totalStudents) * 100) : 0
@@ -194,8 +201,68 @@ export default async function RecapPage(props: PageProps) {
         })}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Financial Overview Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Total Pemasukan */}
+        <div className="bg-emerald-600 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+          <div className="relative">
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">Total Pemasukan</span>
+            </div>
+            <p className="text-xl font-black text-white leading-tight">
+              Rp {totalCollectedMonth.toLocaleString('id-ID')}
+            </p>
+            <p className="text-[10px] text-emerald-200 font-medium mt-1">
+              {MONTHS_FULL[selectedMonth - 1]} {year}
+            </p>
+          </div>
+        </div>
+
+        {/* Total Pengeluaran */}
+        <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+          <div className="relative">
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                <TrendingDown className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Total Pengeluaran</span>
+            </div>
+            <p className="text-xl font-black text-white leading-tight">
+              Rp {totalExpensesMonth.toLocaleString('id-ID')}
+            </p>
+            <p className="text-[10px] text-zinc-400 font-medium mt-1">
+              {currentMonthExpenses.length} transaksi pengeluaran
+            </p>
+          </div>
+        </div>
+
+        {/* Saldo Bersih */}
+        <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+          <div className="relative">
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                <Wallet className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Saldo Bersih</span>
+            </div>
+            <p className={`text-xl font-black leading-tight ${saldoBersihMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              Rp {saldoBersihMonth.toLocaleString('id-ID')}
+            </p>
+            <p className="text-[10px] text-zinc-400 font-medium mt-1">
+              Pemasukan - Pengeluaran
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Student Payment Status Cards */}
+      <div className="grid grid-cols-3 gap-3">
         {/* Lunas */}
         <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full opacity-80" />
@@ -206,7 +273,7 @@ export default async function RecapPage(props: PageProps) {
               </div>
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Lunas</span>
             </div>
-            <p className="text-3xl font-black text-zinc-900">{lunasCount}</p>
+            <p className="text-2xl font-black text-zinc-900">{lunasCount}</p>
             <p className="text-[10px] text-emerald-600 font-medium mt-1">{lunasPercent}% dari total</p>
           </div>
         </div>
@@ -221,7 +288,7 @@ export default async function RecapPage(props: PageProps) {
               </div>
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Mencicil</span>
             </div>
-            <p className="text-3xl font-black text-zinc-900">{cicilanCount}</p>
+            <p className="text-2xl font-black text-zinc-900">{cicilanCount}</p>
             <p className="text-[10px] text-amber-600 font-medium mt-1">Dalam proses</p>
           </div>
         </div>
@@ -236,27 +303,8 @@ export default async function RecapPage(props: PageProps) {
               </div>
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Belum</span>
             </div>
-            <p className="text-3xl font-black text-zinc-900">{belumBayarCount}</p>
+            <p className="text-2xl font-black text-zinc-900">{belumBayarCount}</p>
             <p className="text-[10px] text-red-500 font-medium mt-1">Perlu ditagih</p>
-          </div>
-        </div>
-
-        {/* Total */}
-        <div className="bg-emerald-600 rounded-2xl p-4 shadow-sm relative overflow-hidden col-span-2 sm:col-span-1">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">Terkumpul</span>
-            </div>
-            <p className="text-xl font-black text-white leading-tight">
-              Rp {(totalCollectedMonth / 1000).toFixed(0)}k
-            </p>
-            <p className="text-[10px] text-emerald-200 font-medium mt-1">
-              {MONTHS_FULL[selectedMonth - 1]} {year}
-            </p>
           </div>
         </div>
       </div>
@@ -412,6 +460,55 @@ export default async function RecapPage(props: PageProps) {
         <div className="flex items-center gap-1.5 ml-1 text-zinc-400">
           <span>· Tap sel untuk detail</span>
         </div>
+      </div>
+
+      {/* Rincian Pengeluaran Bulan Ini */}
+      <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden mt-6">
+        <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Receipt className="w-4 h-4 text-zinc-900" />
+            <div>
+              <p className="text-sm font-bold text-zinc-900">Rincian Pengeluaran</p>
+              <p className="text-[11px] text-zinc-400 mt-0.5">{MONTHS_FULL[selectedMonth - 1]} {year}</p>
+            </div>
+          </div>
+          <Link
+            href="/admin/expenses"
+            className="text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 px-3 py-1.5 rounded-md transition-colors"
+          >
+            + Kelola Pengeluaran
+          </Link>
+        </div>
+
+        {currentMonthExpenses.length === 0 ? (
+          <div className="py-8 text-center text-xs text-zinc-400">
+            Belum ada pengeluaran dicatat pada bulan {MONTHS_FULL[selectedMonth - 1]} {year}
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-100">
+            {currentMonthExpenses.map(exp => {
+              const cat = EXPENSE_CATEGORIES.find(c => c.value === exp.category)
+              return (
+                <div key={exp.id} className="flex items-center justify-between px-4 py-3 text-xs sm:text-sm hover:bg-zinc-50 transition-colors">
+                  <div className="flex items-center gap-2.5">
+                    <Tag className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-zinc-800">{exp.title}</p>
+                      <p className="text-[11px] text-zinc-400">{exp.category} {exp.note ? `· ${exp.note}` : ''}</p>
+                    </div>
+                  </div>
+                  <span className="font-semibold text-zinc-900">
+                    -Rp {exp.amount.toLocaleString('id-ID')}
+                  </span>
+                </div>
+              )
+            })}
+            <div className="px-4 py-2.5 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs font-bold text-zinc-800">
+              <span>Total Pengeluaran ({MONTHS_FULL[selectedMonth - 1]})</span>
+              <span>-Rp {totalExpensesMonth.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

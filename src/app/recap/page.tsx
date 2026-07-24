@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { Check, Clock, X, ChevronLeft, ChevronRight, Wallet, QrCode, Lock } from 'lucide-react'
+import { Check, Clock, X, ChevronLeft, ChevronRight, Wallet, QrCode, Lock, Info } from 'lucide-react'
 import Link from 'next/link'
 import StatusCell from '../admin/recap/StatusCell'
 import ExportButton from '../admin/recap/ExportButton'
@@ -233,7 +233,10 @@ export default async function PublicRecapPage(props: PageProps) {
 
         {/* Info Banner */}
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 text-xs text-amber-800 space-y-1">
-          <p className="font-semibold text-amber-900">💡 Aturan Pembayaran Uang Kas:</p>
+          <p className="font-semibold text-amber-900 flex items-center gap-1.5">
+            <Info className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Aturan Pembayaran Uang Kas:</span>
+          </p>
           <ul className="list-disc list-inside space-y-0.5 text-amber-700">
             <li>Bayar LUNAS sekaligus dalam 1 transaksi di bulan berjalan: <b>Rp 10.000</b>.</li>
             <li>Jika dicicil dan lunas dalam waktu <b>≤ 1 minggu (7 hari)</b> sejak cicilan pertama: Total bayar <b>Rp 10.000</b>.</li>
