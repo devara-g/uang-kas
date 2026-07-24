@@ -14,6 +14,10 @@ export default async function AdminDashboard() {
   const { data: payments } = await supabase.from('payments').select('*').eq('year', currentYear)
 
   const currentMonth = new Date().getMonth() + 1
+  // Sistem mulai Agustus 2026 — kalau masih sebelum itu, gunakan bulan 8 sebagai acuan
+  const startMonth = currentYear === 2026 ? 8 : 1
+  const activeMonth = currentYear === 2026 ? Math.max(currentMonth, startMonth) : currentMonth
+  const isBeforeStart = currentYear === 2026 && currentMonth < startMonth
   let totalLunasBulanIni = 0
   let totalUangMasukBulanIni = 0
 
@@ -21,7 +25,7 @@ export default async function AdminDashboard() {
   const paymentStatus: Record<string, { totalPaid: number, count: number }> = {}
 
   payments?.forEach(p => {
-    if (p.month === currentMonth) {
+    if (p.month === activeMonth) {
       if (!paymentStatus[p.student_id]) {
         paymentStatus[p.student_id] = { totalPaid: 0, count: 0 }
       }
@@ -40,7 +44,7 @@ export default async function AdminDashboard() {
 
   // Data grafik bulanan (2026: Agustus - Desember; Tahun lain: Jan - Des)
   const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
-  const startMonth = currentYear === 2026 ? 8 : 1
+  // startMonth sudah dideklarasikan di atas
   const monthlyData = []
 
   for (let m = startMonth; m <= 12; m++) {
@@ -58,6 +62,12 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      {isBeforeStart && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-4 py-3 text-sm">
+          <span className="text-base leading-none mt-0.5">🗓️</span>
+          <p>Sistem kas mulai aktif <strong>Agustus {currentYear}</strong>. Data pembayaran akan muncul setelah periode dimulai.</p>
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">Overview</h1>
         <p className="text-sm text-zinc-500">Monitor your classroom finances for {currentYear}.</p>

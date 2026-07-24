@@ -56,7 +56,7 @@ export default function ExportButton({ monthlyData, currentMonth, year }: Export
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-1.5 z-50 bg-white border border-zinc-200 rounded-lg shadow-lg overflow-hidden w-[220px] max-w-[calc(100vw-32px)]">
+          <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-zinc-200 rounded-lg shadow-lg overflow-hidden w-[220px] max-w-[calc(100vw-32px)]">
             <div className="px-3 py-2 bg-zinc-50 border-b border-zinc-100">
               <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Ekspor Excel (.xlsx)</p>
             </div>
