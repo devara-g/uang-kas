@@ -1,7 +1,7 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/utils/supabase/server'
 import { 
-  Wallet, 
   Eye, 
   Lock, 
   ArrowRight, 
@@ -111,9 +111,13 @@ export default async function Home() {
       <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-zinc-900 rounded-lg flex items-center justify-center text-white shadow-xs">
-              <Wallet className="w-4 h-4" />
-            </div>
+            <Image
+              src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
+              alt="PPLG 1 AREA"
+              width={36}
+              height={36}
+              className="rounded-lg object-cover shadow-xs"
+            />
             <div>
               <span className="font-semibold text-zinc-900 tracking-tight text-base block">KasKelas</span>
               <span className="text-[11px] text-zinc-500 block -mt-1 font-normal">Sistem Manajemen Uang Kas</span>
@@ -142,7 +146,7 @@ export default async function Home() {
               className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>Admin Portal</span>
+              <span>as Bendahara</span>
             </Link>
           </div>
         </div>
@@ -183,7 +187,7 @@ export default async function Home() {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 font-medium py-2.5 px-5 rounded-lg shadow-xs transition-colors text-sm"
             >
               <Lock className="w-4 h-4 text-zinc-500" />
-              <span>Login Admin</span>
+              <span>as Bendahara</span>
             </Link>
 
             <Link
@@ -372,9 +376,13 @@ export default async function Home() {
       <footer className="border-t border-zinc-200 bg-white py-6 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-zinc-900 rounded flex items-center justify-center text-white">
-              <Wallet className="w-3 h-3" />
-            </div>
+            <Image
+              src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
+              alt="PPLG 1 AREA"
+              width={20}
+              height={20}
+              className="rounded object-cover"
+            />
             <span className="font-semibold text-zinc-900">KasKelas</span>
             <span>— Manajemen Uang Kas Transparan</span>
           </div>

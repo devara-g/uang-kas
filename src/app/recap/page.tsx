@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
-import { Check, Clock, X, ChevronLeft, ChevronRight, Wallet, QrCode, Lock, Info } from 'lucide-react'
+import { Check, Clock, X, ChevronLeft, ChevronRight, QrCode, Lock, Info } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import StatusCell from '../admin/recap/StatusCell'
 import ExportButton from '../admin/recap/ExportButton'
 
@@ -144,9 +145,13 @@ export default async function PublicRecapPage(props: PageProps) {
       <header className="bg-white border-b border-zinc-200">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-zinc-900 rounded-lg flex items-center justify-center text-white font-semibold shadow-xs">
-              <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
+            <Image
+              src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
+              alt="PPLG 1 AREA"
+              width={36}
+              height={36}
+              className="rounded-lg object-cover shadow-xs"
+            />
             <div>
               <span className="font-bold text-zinc-900 tracking-tight text-sm sm:text-base block">Kas Kelas</span>
               <span className="text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block -mt-1">Rekap Transparan Member</span>
@@ -167,7 +172,7 @@ export default async function PublicRecapPage(props: PageProps) {
               className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 text-[11px] sm:text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>Login Admin</span>
+              <span>as Bendahara</span>
             </Link>
           </div>
         </div>
