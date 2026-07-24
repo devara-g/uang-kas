@@ -4,15 +4,15 @@ import IncomeLineChart from './IncomeLineChart'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
-
-  // Ambil data siswa
-  const { data: students } = await supabase.from('students').select('*')
-  const totalStudents = students?.length || 0
-
-  // Ambil data pembayaran tahun ini
   const currentYear = new Date().getFullYear()
-  const { data: payments } = await supabase.from('payments').select('*').eq('year', currentYear)
 
+  // Parallel fetch untuk performa lebih cepat
+  const [{ data: students }, { data: payments }] = await Promise.all([
+    supabase.from('students').select('*'),
+    supabase.from('payments').select('*').eq('year', currentYear),
+  ])
+
+  const totalStudents = students?.length || 0
   const currentMonth = new Date().getMonth() + 1
   // Sistem mulai Agustus 2026 — kalau masih sebelum itu, gunakan bulan 8 sebagai acuan
   const startMonth = currentYear === 2026 ? 8 : 1
@@ -44,7 +44,6 @@ export default async function AdminDashboard() {
 
   // Data grafik bulanan (2026: Agustus - Desember; Tahun lain: Jan - Des)
   const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
-  // startMonth sudah dideklarasikan di atas
   const monthlyData = []
 
   for (let m = startMonth; m <= 12; m++) {
@@ -52,13 +51,9 @@ export default async function AdminDashboard() {
     payments?.filter(p => p.month === m).forEach(p => {
       totalMasuk += p.amount
     })
-
-    monthlyData.push({
-      month: m,
-      name: MONTHS_SHORT[m - 1],
-      total: totalMasuk,
-    })
+    monthlyData.push({ month: m, name: MONTHS_SHORT[m - 1], total: totalMasuk })
   }
+
 
   return (
     <div className="space-y-6">

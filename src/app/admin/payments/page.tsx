@@ -7,15 +7,16 @@ import Link from 'next/link'
 export default async function PaymentsPage() {
   const supabase = await createClient()
 
-  // Ambil data siswa untuk dropdown
-  const { data: students } = await supabase.from('students').select('id, name').order('name', { ascending: true })
-  
-  // Ambil data transaksi terbaru
-  const { data: recentPayments } = await supabase
-    .from('payments')
-    .select('*, students(name)')
-    .order('created_at', { ascending: false })
-    .limit(15)
+  // Parallel fetch untuk performa lebih cepat
+  const [{ data: students }, { data: recentPayments }] = await Promise.all([
+    supabase.from('students').select('id, name').order('name', { ascending: true }),
+    supabase
+      .from('payments')
+      .select('*, students(name)')
+      .order('created_at', { ascending: false })
+      .limit(15),
+  ])
+
 
   return (
     <div className="space-y-6">

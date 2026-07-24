@@ -110,6 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 onClick={() => setMobileOpen(false)}
                 className={`
                   flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
@@ -174,6 +175,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-all duration-200 relative
                     ${active ? 'text-emerald-600' : 'text-zinc-400'}
                   `}

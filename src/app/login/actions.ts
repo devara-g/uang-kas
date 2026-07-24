@@ -18,7 +18,7 @@ export async function login(formData: FormData) {
     return { error: error.message }
   }
 
-  revalidatePath('/', 'layout')
+  // Session sudah di-set via cookies — tidak perlu invalidate seluruh cache layout
   redirect('/admin')
 }
 
