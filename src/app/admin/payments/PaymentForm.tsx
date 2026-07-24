@@ -63,9 +63,13 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
 export default function PaymentForm({ students }: { students: Student[] | null }) {
   const currentMonth = new Date().getMonth() + 1
   const currentYear = new Date().getFullYear()
+  const startMonth = currentYear === 2026 ? 8 : 1
+
+  // Pastikan bulan awal tidak lebih kecil dari startMonth agar cocok dengan dropdown
+  const defaultMonth = Math.max(currentMonth, startMonth)
 
   const [studentId, setStudentId] = useState('')
-  const [month, setMonth] = useState(currentMonth)
+  const [month, setMonth] = useState(defaultMonth)
   const [year, setYear] = useState(currentYear)
   const [amount, setAmount] = useState('')
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus | null>(null)
