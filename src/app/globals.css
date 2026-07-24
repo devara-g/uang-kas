@@ -18,3 +18,17 @@ body {
 * {
   border-color: #e4e4e7; /* zinc-200 */
 }
+
+/* Hide scrollbar but keep scrollable */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth tap on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

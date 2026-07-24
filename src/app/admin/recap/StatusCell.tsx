@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, Clock, X, AlertTriangle } from 'lucide-react'
 
 type CellStatus = 'lunas_sekaligus' | 'lunas_cicilan' | 'mencicil' | 'belum_bayar' | 'nunggak'
@@ -25,6 +25,24 @@ export default function StatusCell({
   isPastMonth = false,
 }: StatusCellProps) {
   const [showModal, setShowModal] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    if (showModal) {
+      // Small delay for animation
+      const t = setTimeout(() => setMounted(true), 10)
+      document.body.style.overflow = 'hidden'
+      return () => clearTimeout(t)
+    } else {
+      setMounted(false)
+      document.body.style.overflow = ''
+    }
+  }, [showModal])
+
+  const closeModal = () => {
+    setMounted(false)
+    setTimeout(() => setShowModal(false), 250)
+  }
 
   let status: CellStatus = 'belum_bayar'
   let target = 10000
@@ -54,10 +72,6 @@ export default function StatusCell({
       }
     }
   } else {
-    // Cek apakah bulan sudah lewat (nunggak)
-    // monthLabel format: "Jul 2026" — kita perlu tahu apakah month ini sudah lewat
-    // Cara paling simpel: cek via prop isPastMonth yang bisa kita tambah
-    // Untuk sementara gunakan flag dari prop
     if (isPastMonth) {
       status = 'nunggak'
       target = 20000
@@ -65,136 +79,214 @@ export default function StatusCell({
   }
 
   const remaining = Math.max(0, target - totalPaid)
+  const progressPct = Math.min(100, Math.round((totalPaid / target) * 100))
 
-  const renderIcon = () => {
-    if (status === 'belum_bayar') return (
-      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-zinc-100 border border-zinc-200">
-        <X className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-400" />
-      </div>
-    )
-    if (status === 'nunggak') return (
-      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-red-100 border border-red-300">
-        <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />
-      </div>
-    )
-    if (status === 'mencicil') return (
-      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-amber-50 border border-amber-200">
-        <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-500" />
-      </div>
-    )
-    return (
-      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center bg-emerald-50 border border-emerald-200">
-        <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600" />
-      </div>
-    )
+  const statusConfig = {
+    lunas_sekaligus: {
+      bg: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      icon: <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600" />,
+      iconBg: 'bg-emerald-100',
+      text: 'Lunas Sekaligus',
+      subtext: '10k',
+      textColor: 'text-emerald-700',
+      badgeBg: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      progressColor: 'bg-emerald-500',
+    },
+    lunas_cicilan: {
+      bg: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      icon: <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600" />,
+      iconBg: 'bg-emerald-100',
+      text: 'Lunas Cicilan',
+      subtext: target === 10000 ? '10k' : target === 15000 ? '15k' : '20k',
+      textColor: 'text-emerald-700',
+      badgeBg: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      progressColor: 'bg-emerald-500',
+    },
+    mencicil: {
+      bg: 'bg-amber-50',
+      border: 'border-amber-200',
+      icon: <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-600" />,
+      iconBg: 'bg-amber-100',
+      text: 'Mencicil',
+      subtext: `${(totalPaid / 1000).toFixed(0)}k`,
+      textColor: 'text-amber-700',
+      badgeBg: 'bg-amber-100 text-amber-700 border-amber-200',
+      progressColor: 'bg-amber-400',
+    },
+    belum_bayar: {
+      bg: '',
+      border: 'border-zinc-100',
+      icon: <X className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-400" />,
+      iconBg: 'bg-zinc-100',
+      text: 'Belum Bayar',
+      subtext: '',
+      textColor: 'text-zinc-400',
+      badgeBg: 'bg-zinc-100 text-zinc-600 border-zinc-200',
+      progressColor: 'bg-zinc-300',
+    },
+    nunggak: {
+      bg: 'bg-red-50',
+      border: 'border-red-200',
+      icon: <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />,
+      iconBg: 'bg-red-100',
+      text: 'Nunggak',
+      subtext: '20k',
+      textColor: 'text-red-600',
+      badgeBg: 'bg-red-100 text-red-700 border-red-200',
+      progressColor: 'bg-red-400',
+    },
   }
 
-  const getStatusText = () => {
-    if (status === 'belum_bayar') return 'Belum Bayar'
-    if (status === 'nunggak') return 'Nunggak (20k)'
-    if (status === 'mencicil') return `Mencicil (Target Rp ${target.toLocaleString('id-ID')})`
-    if (status === 'lunas_sekaligus') return 'Lunas Sekaligus (10k)'
-    return `Lunas Cicilan (${target === 10000 ? '10k ≤ 1 mgg' : target === 15000 ? '15k > 1 mgg' : '20k nunggak'})`
-  }
+  const cfg = statusConfig[status]
+
+  const formatRp = (v: number) => `Rp ${v.toLocaleString('id-ID')}`
 
   return (
     <>
-      <div 
-        className="relative group flex flex-col items-center justify-center w-full h-full py-1 sm:py-1.5 cursor-pointer hover:bg-zinc-50 transition-colors"
+      {/* Cell */}
+      <div
+        className={`relative group flex flex-col items-center justify-center w-full h-full py-1 sm:py-1.5 cursor-pointer transition-all duration-150 hover:z-10 select-none active:scale-95`}
         onClick={() => setShowModal(true)}
       >
-        {renderIcon()}
-        {status === 'nunggak' && (
-          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-red-700">20k</span>
+        {/* Background tint */}
+        {cfg.bg && (
+          <div className={`absolute inset-0.5 rounded ${cfg.bg} opacity-60`} />
         )}
-        {status === 'mencicil' && (
-          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-amber-700">
-            {(totalPaid / 1000).toFixed(0)}k
-          </span>
-        )}
-        {(status === 'lunas_sekaligus' || status === 'lunas_cicilan') && (
-          <span className="text-[8px] sm:text-[10px] font-medium mt-0.5 sm:mt-1 text-emerald-700">
-            {target === 10000 ? '10k' : target === 15000 ? '15k' : '20k'}
-          </span>
-        )}
+        <div className="relative flex flex-col items-center gap-0.5">
+          <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center ${cfg.iconBg} border ${cfg.border}`}>
+            {cfg.icon}
+          </div>
+          {cfg.subtext && (
+            <span className={`text-[8px] sm:text-[9px] font-semibold ${cfg.textColor}`}>
+              {cfg.subtext}
+            </span>
+          )}
+        </div>
 
-        {/* Hover Tooltip (Desktop only) */}
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden md:group-hover:flex z-50 pointer-events-none w-max transition-opacity opacity-0 group-hover:opacity-100">
-          <div className="bg-zinc-900 text-white text-xs rounded-md py-2 px-3 shadow-sm flex flex-col items-center border border-zinc-800">
-            <span className="font-medium text-zinc-300 mb-1">{studentName} - {monthLabel}</span>
-            <span className="font-semibold text-white">{getStatusText()}</span>
-            {status === 'mencicil' && <span className="text-amber-400 mt-0.5">Sisa: Rp {remaining.toLocaleString('id-ID')}</span>}
-            {status === 'nunggak' && <span className="text-red-400 mt-0.5">Nunggak! Target: Rp 20.000</span>}
-            {status === 'belum_bayar' && <span className="text-zinc-400 mt-0.5">Target: Rp 10.000</span>}
-            
-            {/* Tooltip Arrow */}
+        {/* Hover Tooltip — Desktop only */}
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden md:group-hover:flex z-50 pointer-events-none w-max">
+          <div className="bg-zinc-900 text-white text-[11px] rounded-lg py-2.5 px-3.5 shadow-xl flex flex-col gap-1 border border-white/10">
+            <span className="font-semibold text-white">{studentName}</span>
+            <span className="text-zinc-400">{monthLabel}</span>
+            <span className={`font-medium mt-0.5 ${
+              status.startsWith('lunas') ? 'text-emerald-400' :
+              status === 'mencicil' ? 'text-amber-400' :
+              status === 'nunggak' ? 'text-red-400' : 'text-zinc-400'
+            }`}>
+              {cfg.text}
+              {status === 'mencicil' && ` · Sisa ${formatRp(remaining)}`}
+            </span>
             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900" />
           </div>
         </div>
       </div>
 
-      {/* Modal Popup (Mobile & Desktop on click) */}
+      {/* Modal — Bottom Sheet on Mobile, Centered on Desktop */}
       {showModal && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
-          onClick={() => setShowModal(false)}
+        <div
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4"
+          style={{ backgroundColor: mounted ? 'rgba(9,9,11,0.5)' : 'rgba(9,9,11,0)', backdropFilter: 'blur(4px)', transition: 'background-color 250ms ease' }}
+          onClick={closeModal}
         >
-          <div 
-            className="bg-white rounded-lg p-6 w-full max-w-xs shadow-lg transition-transform transform scale-100 border border-zinc-200"
+          <div
+            className={`
+              bg-white w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden
+              transition-all duration-250 ease-out
+              ${mounted ? 'translate-y-0 opacity-100 sm:scale-100' : 'translate-y-full opacity-0 sm:translate-y-0 sm:scale-95'}
+            `}
+            style={{ transitionDuration: '250ms' }}
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-semibold text-zinc-900 text-sm tracking-tight">Payment Details</h3>
-              <button 
-                onClick={() => setShowModal(false)}
-                className="w-6 h-6 rounded flex items-center justify-center text-zinc-400 hover:bg-zinc-100 transition-colors"
+            {/* Handle bar — mobile only */}
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="w-10 h-1 rounded-full bg-zinc-200" />
+            </div>
+
+            {/* Header */}
+            <div className={`px-5 pt-4 pb-4 sm:pt-5 flex items-start justify-between gap-3 border-b border-zinc-100`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cfg.iconBg} border ${cfg.border} shrink-0`}>
+                  <div className="scale-150">{cfg.icon}</div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-900 text-sm leading-tight">{studentName}</h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">{monthLabel}</p>
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:bg-zinc-100 transition-colors shrink-0 mt-0.5"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
-                <span className="text-xs font-medium text-zinc-500">Student</span>
-                <span className="text-sm font-medium text-zinc-900">{studentName}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
-                <span className="text-xs font-medium text-zinc-500">Month</span>
-                <span className="text-sm font-medium text-zinc-900">{monthLabel}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
-                <span className="text-xs font-medium text-zinc-500">Status</span>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-md border ${
-                  status === 'belum_bayar' ? 'bg-zinc-100 text-zinc-600 border-zinc-200' :
-                  status === 'nunggak' ? 'bg-red-100 text-red-700 border-red-300' :
-                  (status === 'mencicil' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')
-                }`}>
-                  {getStatusText()}
+
+            {/* Content */}
+            <div className="px-5 py-4 space-y-4">
+              {/* Status Badge */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-zinc-500">Status Pembayaran</span>
+                <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${cfg.badgeBg}`}>
+                  {cfg.text}
                 </span>
               </div>
-              
-              <div className="bg-zinc-50 rounded-md p-4 mt-2 border border-zinc-200">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-medium text-zinc-500">Total Terbayar</span>
-                  <span className="text-sm font-semibold text-zinc-900">Rp {totalPaid.toLocaleString('id-ID')}</span>
+
+              {/* Progress Bar */}
+              <div>
+                <div className="flex justify-between text-xs mb-1.5">
+                  <span className="text-zinc-500">Progress</span>
+                  <span className={`font-semibold ${cfg.textColor}`}>{progressPct}%</span>
                 </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-medium text-zinc-500">Target Bayar</span>
-                  <span className="text-sm font-semibold text-zinc-900">Rp {target.toLocaleString('id-ID')}</span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-zinc-200">
-                  <span className="text-xs font-medium text-zinc-500">Sisa Tagihan</span>
-                  <span className="text-sm font-semibold text-zinc-900">Rp {remaining.toLocaleString('id-ID')}</span>
+                <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${cfg.progressColor}`}
+                    style={{ width: `${progressPct}%` }}
+                  />
                 </div>
               </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-zinc-50 rounded-xl p-3 border border-zinc-100">
+                  <p className="text-[10px] text-zinc-400 font-medium mb-1">Terbayar</p>
+                  <p className="text-sm font-bold text-zinc-900 leading-tight">
+                    {(totalPaid / 1000).toFixed(0)}k
+                  </p>
+                </div>
+                <div className="bg-zinc-50 rounded-xl p-3 border border-zinc-100">
+                  <p className="text-[10px] text-zinc-400 font-medium mb-1">Target</p>
+                  <p className="text-sm font-bold text-zinc-900 leading-tight">
+                    {(target / 1000).toFixed(0)}k
+                  </p>
+                </div>
+                <div className={`rounded-xl p-3 border ${remaining > 0 ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                  <p className="text-[10px] text-zinc-400 font-medium mb-1">Sisa</p>
+                  <p className={`text-sm font-bold leading-tight ${remaining > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                    {remaining > 0 ? `${(remaining / 1000).toFixed(0)}k` : '✓'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Payment Count */}
+              {count > 0 && (
+                <div className="flex items-center justify-between text-xs text-zinc-500 bg-zinc-50 rounded-xl px-4 py-3 border border-zinc-100">
+                  <span>Jumlah transaksi</span>
+                  <span className="font-semibold text-zinc-700">{count}x bayar</span>
+                </div>
+              )}
             </div>
-            
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full mt-6 py-2 rounded-md text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 transition-colors"
-            >
-              Tutup
-            </button>
+
+            {/* Close Button */}
+            <div className="px-5 pb-5 pt-1">
+              <button
+                onClick={closeModal}
+                className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 active:bg-zinc-950 transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}
