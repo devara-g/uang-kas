@@ -204,108 +204,90 @@ export default async function RecapPage(props: PageProps) {
       {/* Financial Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Total Pemasukan */}
-        <div className="bg-emerald-600 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">Total Pemasukan</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="w-6 h-6 bg-zinc-100 rounded-md flex items-center justify-center">
+              <TrendingUp className="w-3.5 h-3.5 text-zinc-600" />
             </div>
-            <p className="text-xl font-black text-white leading-tight">
-              Rp {totalCollectedMonth.toLocaleString('id-ID')}
-            </p>
-            <p className="text-[10px] text-emerald-200 font-medium mt-1">
-              {MONTHS_FULL[selectedMonth - 1]} {year}
-            </p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Total Pemasukan</span>
           </div>
+          <p className="text-xl font-bold text-zinc-900 leading-tight">
+            Rp {totalCollectedMonth.toLocaleString('id-ID')}
+          </p>
+          <p className="text-[10px] text-zinc-400 mt-1">
+            {MONTHS_FULL[selectedMonth - 1]} {year}
+          </p>
         </div>
 
         {/* Total Pengeluaran */}
-        <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                <TrendingDown className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Total Pengeluaran</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="w-6 h-6 bg-zinc-100 rounded-md flex items-center justify-center">
+              <TrendingDown className="w-3.5 h-3.5 text-zinc-600" />
             </div>
-            <p className="text-xl font-black text-white leading-tight">
-              Rp {totalExpensesMonth.toLocaleString('id-ID')}
-            </p>
-            <p className="text-[10px] text-zinc-400 font-medium mt-1">
-              {currentMonthExpenses.length} transaksi pengeluaran
-            </p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Total Pengeluaran</span>
           </div>
+          <p className="text-xl font-bold text-zinc-900 leading-tight">
+            Rp {totalExpensesMonth.toLocaleString('id-ID')}
+          </p>
+          <p className="text-[10px] text-zinc-400 mt-1">
+            {currentMonthExpenses.length} transaksi pengeluaran
+          </p>
         </div>
 
         {/* Saldo Bersih */}
-        <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                <Wallet className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Saldo Bersih</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="w-6 h-6 bg-zinc-100 rounded-md flex items-center justify-center">
+              <Wallet className="w-3.5 h-3.5 text-zinc-600" />
             </div>
-            <p className={`text-xl font-black leading-tight ${saldoBersihMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              Rp {saldoBersihMonth.toLocaleString('id-ID')}
-            </p>
-            <p className="text-[10px] text-zinc-400 font-medium mt-1">
-              Pemasukan - Pengeluaran
-            </p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Saldo Bersih</span>
           </div>
+          <p className={`text-xl font-bold leading-tight ${saldoBersihMonth >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+            Rp {saldoBersihMonth.toLocaleString('id-ID')}
+          </p>
+          <p className="text-[10px] text-zinc-400 mt-1">
+            Pemasukan - Pengeluaran
+          </p>
         </div>
       </div>
 
       {/* Student Payment Status Cards */}
       <div className="grid grid-cols-3 gap-3">
         {/* Lunas */}
-        <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full opacity-80" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-              </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Lunas</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-6 h-6 bg-emerald-50 rounded-md flex items-center justify-center border border-emerald-100">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
             </div>
-            <p className="text-2xl font-black text-zinc-900">{lunasCount}</p>
-            <p className="text-[10px] text-emerald-600 font-medium mt-1">{lunasPercent}% dari total</p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Lunas</span>
           </div>
+          <p className="text-2xl font-bold text-zinc-900">{lunasCount}</p>
+          <p className="text-[10px] text-emerald-600 font-medium mt-1">{lunasPercent}% dari total</p>
         </div>
 
         {/* Mencicil */}
-        <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-amber-50 rounded-bl-full opacity-80" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-3.5 h-3.5 text-amber-600" />
-              </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Mencicil</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-6 h-6 bg-amber-50 rounded-md flex items-center justify-center border border-amber-100">
+              <Clock className="w-3.5 h-3.5 text-amber-600" />
             </div>
-            <p className="text-2xl font-black text-zinc-900">{cicilanCount}</p>
-            <p className="text-[10px] text-amber-600 font-medium mt-1">Dalam proses</p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Mencicil</span>
           </div>
+          <p className="text-2xl font-bold text-zinc-900">{cicilanCount}</p>
+          <p className="text-[10px] text-amber-600 font-medium mt-1">Dalam proses</p>
         </div>
 
         {/* Belum Bayar */}
-        <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full opacity-80" />
-          <div className="relative">
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center">
-                <X className="w-3.5 h-3.5 text-red-600" />
-              </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Belum</span>
+        <div className="bg-white rounded-xl p-4 border border-zinc-200 shadow-xs">
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-6 h-6 bg-red-50 rounded-md flex items-center justify-center border border-red-100">
+              <X className="w-3.5 h-3.5 text-red-600" />
             </div>
-            <p className="text-2xl font-black text-zinc-900">{belumBayarCount}</p>
-            <p className="text-[10px] text-red-500 font-medium mt-1">Perlu ditagih</p>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Belum</span>
           </div>
+          <p className="text-2xl font-bold text-zinc-900">{belumBayarCount}</p>
+          <p className="text-[10px] text-red-500 font-medium mt-1">Perlu ditagih</p>
         </div>
       </div>
 

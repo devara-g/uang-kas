@@ -2,17 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/utils/supabase/server'
 import { 
-  Eye, 
-  Lock, 
-  ArrowRight, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  QrCode, 
-  FileSpreadsheet, 
-  ShieldCheck, 
   ChevronRight,
-  BarChart3,
   Receipt
 } from 'lucide-react'
 
@@ -109,142 +99,124 @@ export default async function Home() {
     <div className="min-h-screen bg-[#fafafa] text-zinc-900 flex flex-col font-sans selection:bg-zinc-900 selection:text-white">
       {/* Header */}
       <header className="bg-white border-b border-zinc-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <Image
               src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
-              alt="PPLG 1 AREA"
-              width={36}
-              height={36}
-              className="rounded-lg object-cover shadow-xs"
+              alt="PPLG 1"
+              width={32}
+              height={32}
+              className="rounded-lg object-cover"
             />
             <div>
-              <span className="font-semibold text-zinc-900 tracking-tight text-base block">KasKelas</span>
-              <span className="text-[11px] text-zinc-500 block -mt-1 font-normal">Sistem Manajemen Uang Kas</span>
+              <span className="font-bold text-zinc-900 text-sm block">Kas Kelas</span>
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href="/recap"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200/80 rounded-md transition-colors"
+              className="px-3 py-1.5 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
             >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Rekap Kas</span>
+              Rekap Kas
             </Link>
 
             <Link
               href="/admin/qris"
-              className="hidden xs:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200/80 rounded-md transition-colors"
+              className="hidden xs:block px-3 py-1.5 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
             >
-              <QrCode className="w-3.5 h-3.5 text-zinc-600" />
-              <span>QRIS</span>
+              QRIS
             </Link>
 
             <Link
               href="/login"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
+              className="px-3 py-1.5 text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors"
             >
-              <Lock className="w-3.5 h-3.5" />
-              <span>as Bendahara</span>
+              Login Bendahara
             </Link>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
         
         {/* HERO SECTION */}
-        <section className="text-center space-y-6 max-w-3xl mx-auto pt-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-700 text-xs font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>Sistem Manajemen & Rekapitulasi Kas Transparan</span>
-          </div>
-
-          <div className="space-y-3">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
-              Transparansi Uang Kas Kelas dalam Satu Platform
-            </h1>
-            <p className="text-base sm:text-lg text-zinc-600 max-w-2xl mx-auto leading-relaxed">
-              Pantau status pembayaran siswa secara real-time, cetak rekap Excel resmi, dan kelola kas kelas dengan sistem aturan otomatis yang akurat.
-            </p>
-          </div>
+        <section className="text-center space-y-4 pt-2">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900">
+            Rekap Uang Kas Kelas
+          </h1>
+          <p className="text-sm sm:text-base text-zinc-600 max-w-xl mx-auto">
+            Pantau status pembayaran kas siswa dan unduh laporan kas kelas.
+          </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
             <Link
               href="/recap"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-2.5 px-5 rounded-lg shadow-xs transition-colors text-sm"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-2 px-4 rounded-md text-xs transition-colors"
             >
-              <Eye className="w-4 h-4" />
-              <span>Lihat Rekap Kas (Public)</span>
-              <ArrowRight className="w-4 h-4 text-zinc-400" />
-            </Link>
-
-            <Link
-              href="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 font-medium py-2.5 px-5 rounded-lg shadow-xs transition-colors text-sm"
-            >
-              <Lock className="w-4 h-4 text-zinc-500" />
-              <span>as Bendahara</span>
+              Lihat Rekap Kas
             </Link>
 
             <Link
               href="/admin/qris"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm"
+              className="bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 font-medium py-2 px-4 rounded-md text-xs transition-colors"
             >
-              <QrCode className="w-4 h-4 text-zinc-600" />
-              <span>QRIS Pembayaran</span>
+              QRIS Pembayaran
+            </Link>
+
+            <Link
+              href="/login"
+              className="bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-medium py-2 px-4 rounded-md text-xs transition-colors"
+            >
+              Login Bendahara
             </Link>
           </div>
         </section>
 
-        {/* REAL DASHBOARD SUMMARY PREVIEW */}
-        <section className="max-w-4xl mx-auto">
+        {/* DASHBOARD SUMMARY PREVIEW */}
+        <section>
           <div className="bg-white border border-zinc-200 rounded-xl shadow-xs overflow-hidden">
-            <div className="px-5 py-4 border-b border-zinc-200 bg-zinc-50/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-zinc-700" />
-                <span className="text-xs font-semibold text-zinc-900 uppercase tracking-wider">Ringkasan Kas Kelas</span>
-              </div>
+            <div className="px-4 py-3 border-b border-zinc-200 bg-zinc-50/50 flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-900">Ringkasan Kas Bulan Ini</span>
               <span className="text-xs text-zinc-500 font-medium">
                 {MONTHS_FULL[currentMonth - 1]} {currentYear}
               </span>
             </div>
 
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-zinc-200">
-              <div className="bg-zinc-50 p-4 rounded-lg border border-zinc-200/80">
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider block">Status Lunas</span>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-zinc-900">{lunasCount}</span>
-                  <span className="text-xs text-emerald-600 font-medium">dari {studentList.length} Siswa</span>
+            <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 border-b border-zinc-200">
+              <div className="bg-zinc-50 p-3 rounded-lg border border-zinc-200/80">
+                <span className="text-xs font-medium text-zinc-500 block">Lunas</span>
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className="text-xl font-bold text-zinc-900">{lunasCount}</span>
+                  <span className="text-xs text-emerald-600 font-medium">dari {studentList.length} siswa</span>
                 </div>
               </div>
 
-              <div className="bg-zinc-50 p-4 rounded-lg border border-zinc-200/80">
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider block">Status Mencicil</span>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-zinc-900">{cicilanCount}</span>
-                  <span className="text-xs text-amber-600 font-medium">Siswa</span>
+              <div className="bg-zinc-50 p-3 rounded-lg border border-zinc-200/80">
+                <span className="text-xs font-medium text-zinc-500 block">Mencicil</span>
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className="text-xl font-bold text-zinc-900">{cicilanCount}</span>
+                  <span className="text-xs text-amber-600 font-medium">siswa</span>
                 </div>
               </div>
 
-              <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-200/80">
-                <span className="text-xs font-medium text-emerald-700 uppercase tracking-wider block">Terkumpul Bulan Ini</span>
-                <div className="mt-1">
-                  <span className="text-xl font-bold text-emerald-900">
+              <div className="bg-emerald-50/50 p-3 rounded-lg border border-emerald-200/80">
+                <span className="text-xs font-medium text-emerald-700 block">Terkumpul</span>
+                <div className="mt-0.5">
+                  <span className="text-lg font-bold text-emerald-900">
                     Rp {totalCollectedMonth.toLocaleString('id-ID')}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 bg-white space-y-3">
-              <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
-                <span>Catatan Transaksi Terakhir</span>
-                <Link href="/recap" className="text-zinc-900 hover:underline flex items-center gap-1 font-semibold">
-                  Buka Rekap Lengkap <ChevronRight className="w-3.5 h-3.5" />
+            <div className="p-4 bg-white space-y-2.5">
+              <div className="flex items-center justify-between text-xs text-zinc-500">
+                <span>Transaksi Terakhir</span>
+                <Link href="/recap" className="text-zinc-900 hover:underline flex items-center gap-0.5 font-medium">
+                  Lihat Semua <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
@@ -258,17 +230,14 @@ export default async function Home() {
                       : ''
 
                     return (
-                      <div key={payment.id} className="px-4 py-2.5 flex items-center justify-between bg-white">
-                        <div className="flex items-center gap-2.5">
-                          <Receipt className="w-4 h-4 text-zinc-500 shrink-0" />
-                          <div>
-                            <span className="font-medium text-zinc-900 block">{studentName}</span>
-                            <span className="text-[10px] text-zinc-400">
-                              Bulan {MONTHS_FULL[payment.month - 1]} {payment.year} {dateFormatted && `• ${dateFormatted}`}
-                            </span>
-                          </div>
+                      <div key={payment.id} className="px-3.5 py-2 flex items-center justify-between bg-white">
+                        <div>
+                          <span className="font-medium text-zinc-900 block">{studentName}</span>
+                          <span className="text-[10px] text-zinc-400">
+                            Bulan {MONTHS_FULL[payment.month - 1]} {payment.year} {dateFormatted && `• ${dateFormatted}`}
+                          </span>
                         </div>
-                        <span className="font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
+                        <span className="font-semibold text-emerald-700 text-xs">
                           +Rp {payment.amount.toLocaleString('id-ID')}
                         </span>
                       </div>
@@ -276,8 +245,8 @@ export default async function Home() {
                   })}
                 </div>
               ) : (
-                <div className="p-4 text-center text-xs text-zinc-500 border border-dashed border-zinc-200 rounded-lg">
-                  Belum ada transaksi pembayaran terbaru
+                <div className="p-4 text-center text-xs text-zinc-400 border border-dashed border-zinc-200 rounded-lg">
+                  Belum ada transaksi pembayaran
                 </div>
               )}
             </div>
@@ -285,87 +254,34 @@ export default async function Home() {
         </section>
 
         {/* ATURAN PEMBAYARAN */}
-        <section className="max-w-4xl mx-auto space-y-4">
-          <div className="border-b border-zinc-200 pb-3">
-            <h2 className="text-lg font-bold text-zinc-900">Aturan Pembayaran Uang Kas</h2>
-            <p className="text-xs text-zinc-500">Ketentuan otomatisasi tagihan kas berdasarkan waktu pelunasan.</p>
+        <section className="space-y-3">
+          <div className="border-b border-zinc-200 pb-2">
+            <h2 className="text-base font-bold text-zinc-900">Ketentuan Tagihan Kas</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-white border border-zinc-200 rounded-lg p-4 space-y-1.5 shadow-xs">
-              <div className="flex items-center gap-1.5 text-emerald-700 text-xs font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Lunas Sekaligus</span>
-              </div>
-              <div className="text-xl font-bold text-zinc-900">Rp 10.000</div>
-              <p className="text-xs text-zinc-500">Dibayar lunas dalam 1x transaksi pada bulan berjalan.</p>
+            <div className="bg-white border border-zinc-200 rounded-lg p-3.5 space-y-1">
+              <div className="text-xs font-semibold text-emerald-700">Lunas Sekaligus</div>
+              <div className="text-lg font-bold text-zinc-900">Rp 10.000</div>
+              <p className="text-[11px] text-zinc-500">1x bayar pada bulan berjalan.</p>
             </div>
 
-            <div className="bg-white border border-zinc-200 rounded-lg p-4 space-y-1.5 shadow-xs">
-              <div className="flex items-center gap-1.5 text-emerald-700 text-xs font-semibold">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Cicilan ≤ 7 Hari</span>
-              </div>
-              <div className="text-xl font-bold text-zinc-900">Rp 10.000</div>
-              <p className="text-xs text-zinc-500">Lunas dicicil dalam waktu maksimal 7 hari dari transaksi pertama.</p>
+            <div className="bg-white border border-zinc-200 rounded-lg p-3.5 space-y-1">
+              <div className="text-xs font-semibold text-emerald-700">Cicilan ≤ 7 Hari</div>
+              <div className="text-lg font-bold text-zinc-900">Rp 10.000</div>
+              <p className="text-[11px] text-zinc-500">Lunas maksimal 7 hari dari cicilan awal.</p>
             </div>
 
-            <div className="bg-white border border-zinc-200 rounded-lg p-4 space-y-1.5 shadow-xs">
-              <div className="flex items-center gap-1.5 text-amber-700 text-xs font-semibold">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Cicilan &gt; 7 Hari</span>
-              </div>
-              <div className="text-xl font-bold text-zinc-900">Rp 15.000</div>
-              <p className="text-xs text-zinc-500">Total tagihan menjadi Rp 15k jika pelunasan cicilan melebihi 7 hari.</p>
+            <div className="bg-white border border-zinc-200 rounded-lg p-3.5 space-y-1">
+              <div className="text-xs font-semibold text-amber-700">Cicilan &gt; 7 Hari</div>
+              <div className="text-lg font-bold text-zinc-900">Rp 15.000</div>
+              <p className="text-[11px] text-zinc-500">Lunas lebih dari 7 hari di bulan berjalan.</p>
             </div>
 
-            <div className="bg-white border border-zinc-200 rounded-lg p-4 space-y-1.5 shadow-xs">
-              <div className="flex items-center gap-1.5 text-red-700 text-xs font-semibold">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span>Nunggak</span>
-              </div>
-              <div className="text-xl font-bold text-zinc-900">Rp 20.000</div>
-              <p className="text-xs text-zinc-500">Tagihan untuk bulan yang sudah berlalu dan belum dibayar.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* FITUR UTAMA */}
-        <section className="max-w-4xl mx-auto space-y-4">
-          <div className="border-b border-zinc-200 pb-3">
-            <h2 className="text-lg font-bold text-zinc-900">Fitur Utama Platform</h2>
-            <p className="text-xs text-zinc-500">Kemudahan pengelolaan uang kas untuk bendahara dan anggota kelas.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white border border-zinc-200 rounded-lg p-5 space-y-2 shadow-xs">
-              <div className="w-8 h-8 rounded bg-zinc-100 flex items-center justify-center text-zinc-900 mb-3">
-                <Eye className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-semibold text-zinc-900">Rekapitulasi Publik</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed">
-                Matrix status pembayaran per siswa per bulan yang dapat diakses secara publik dan transparan tanpa perlunya login.
-              </p>
-            </div>
-
-            <div className="bg-white border border-zinc-200 rounded-lg p-5 space-y-2 shadow-xs">
-              <div className="w-8 h-8 rounded bg-zinc-100 flex items-center justify-center text-zinc-900 mb-3">
-                <FileSpreadsheet className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-semibold text-zinc-900">Ekspor Laporan Excel</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed">
-                Unduh rekapitulasi data kas per bulan atau per tahun secara lengkap ke format Microsoft Excel (.xlsx) dengan 1 klik.
-              </p>
-            </div>
-
-            <div className="bg-white border border-zinc-200 rounded-lg p-5 space-y-2 shadow-xs">
-              <div className="w-8 h-8 rounded bg-zinc-100 flex items-center justify-center text-zinc-900 mb-3">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-semibold text-zinc-900">Portal Admin Terproteksi</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed">
-                Pencatatan transaksi kas masuk & keluar, manajemen data siswa, serta pengaturan QRIS dengan autentikasi terenkripsi.
-              </p>
+            <div className="bg-white border border-zinc-200 rounded-lg p-3.5 space-y-1">
+              <div className="text-xs font-semibold text-red-700">Nunggak</div>
+              <div className="text-lg font-bold text-zinc-900">Rp 20.000</div>
+              <p className="text-[11px] text-zinc-500">Lewat bulan dan belum dibayar.</p>
             </div>
           </div>
         </section>
@@ -373,29 +289,22 @@ export default async function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-zinc-200 bg-white py-6 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
+      <footer className="border-t border-zinc-200 bg-white py-5 mt-auto">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
           <div className="flex items-center gap-2">
-            <Image
-              src="/KELAS_XI_PPLG_1_20260724_182044.jpg"
-              alt="PPLG 1 AREA"
-              width={20}
-              height={20}
-              className="rounded object-cover"
-            />
-            <span className="font-semibold text-zinc-900">KasKelas</span>
-            <span>— Manajemen Uang Kas Transparan</span>
+            <span className="font-semibold text-zinc-900">Kas Kelas</span>
+            <span>— Rekap Uang Kas</span>
           </div>
 
           <div className="flex items-center gap-4">
             <Link href="/recap" className="hover:text-zinc-900 transition-colors">
-              Rekap Publik
+              Rekap
             </Link>
             <Link href="/admin/qris" className="hover:text-zinc-900 transition-colors">
               QRIS
             </Link>
             <Link href="/login" className="hover:text-zinc-900 transition-colors">
-              Login Admin
+              Login Bendahara
             </Link>
           </div>
         </div>
