@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
-import { Check, Clock, X, ChevronLeft, ChevronRight, QrCode, Lock, Info } from 'lucide-react'
+import { Check, Clock, X, ChevronLeft, ChevronRight, QrCode, Lock, Info, TrendingUp, TrendingDown, Wallet, Receipt, Tag } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import StatusCell from '../admin/recap/StatusCell'
 import ExportButton from '../admin/recap/ExportButton'
+import { EXPENSE_CATEGORIES } from '@/constants/expense'
 
 const MONTHS = [
   { value: 1, label: 'Jan' },
@@ -81,6 +82,7 @@ export default async function PublicRecapPage(props: PageProps) {
 
   const { data: students } = await supabase.from('students').select('*').order('name', { ascending: true })
   const { data: payments } = await supabase.from('payments').select('*').eq('year', year).order('created_at', { ascending: true })
+  const { data: expenses } = await supabase.from('expenses').select('*').eq('year', year).order('created_at', { ascending: false })
 
   const matrix: Record<string, Record<number, MatrixCell>> = {}
   students?.forEach(student => {
@@ -114,6 +116,14 @@ export default async function PublicRecapPage(props: PageProps) {
     else if (status === 'mencicil') cicilanCount++
     else lunasCount++
   })
+
+  // Expenses untuk bulan yang dipilih
+  const currentMonthExpenses = expenses?.filter(e => e.month === selectedMonth) || []
+  const totalExpensesMonth = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const saldoBersihMonth = totalCollectedMonth - totalExpensesMonth
+
+  const totalStudents = students?.length || 0
+  const lunasPercent = totalStudents > 0 ? Math.round((lunasCount / totalStudents) * 100) : 0
 
   // Build monthly data for export
   const monthlyData = activeMonths.map(m => {
@@ -179,12 +189,14 @@ export default async function PublicRecapPage(props: PageProps) {
       </header>
 
       {/* Content Body */}
-      <main className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6 flex-1">
+      <main className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 flex-1">
         {/* Title & Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
-          <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">Rekap Kas Anggota Class</h1>
-            <p className="text-xs sm:text-sm text-zinc-500">Transparansi pembayaran uang kas siswa tahun {year}.</p>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              {MONTHS_FULL[selectedMonth - 1]} {year} · {totalStudents} siswa
+            </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -196,44 +208,47 @@ export default async function PublicRecapPage(props: PageProps) {
             />
 
             {/* Year Switcher */}
-            <div className="flex items-center bg-white border border-zinc-200 rounded-md p-0.5 sm:p-1 shadow-xs">
+            <div className="flex items-center bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
               <Link
                 href={`/recap?year=${year - 1}&month=${selectedMonth}`}
-                className="p-1 sm:p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
+                className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
               >
-                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <ChevronLeft className="w-4 h-4" />
               </Link>
-              <div className="px-2.5 sm:px-4 py-0.5 text-xs sm:text-sm font-medium text-zinc-900">
-                {year}
-              </div>
+              <span className="px-3 py-1.5 text-sm font-semibold text-zinc-900 border-x border-zinc-100">{year}</span>
               <Link
                 href={`/recap?year=${year + 1}&month=${selectedMonth}`}
-                className="p-1 sm:p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
+                className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
               >
-                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Month Switcher */}
-        <div className="flex flex-wrap gap-1 sm:gap-1.5">
-          {activeMonths.map(m => (
-            <Link
-              key={m.value}
-              href={`/recap?year=${year}&month=${m.value}`}
-              className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md text-[11px] sm:text-xs font-medium transition-colors ${
-                m.value === selectedMonth
-                  ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'bg-white border border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-              }`}
-            >
-              {m.label}
-              {m.value === currentMonth && year === currentYear && (
-                <span className="ml-1 w-1 h-1 bg-current rounded-full inline-block mb-0.5" />
-              )}
-            </Link>
-          ))}
+        {/* Month Tabs */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap">
+          {activeMonths.map(m => {
+            const isSelected = m.value === selectedMonth
+            const isCurrent = m.value === currentMonth && year === currentYear
+            return (
+              <Link
+                key={m.value}
+                href={`/recap?year=${year}&month=${m.value}`}
+                className={`relative shrink-0 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap
+                  ${isSelected
+                    ? 'bg-zinc-900 text-white shadow-md'
+                    : 'bg-white border border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                  }
+                `}
+              >
+                {m.label}
+                {isCurrent && (
+                  <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-2 border-white ${isSelected ? 'bg-emerald-400' : 'bg-emerald-500'}`} />
+                )}
+              </Link>
+            )
+          })}
         </div>
 
         {/* Info Banner */}
@@ -251,62 +266,137 @@ export default async function PublicRecapPage(props: PageProps) {
           </ul>
         </div>
 
-        {/* Summary bulan yang dipilih */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
-            <div className="flex items-center gap-1.5 text-emerald-600">
-              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Lunas</h3>
+        {/* Financial Overview Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Total Pemasukan */}
+          <div className="bg-emerald-600 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">Total Pemasukan</span>
+              </div>
+              <p className="text-xl font-black text-white leading-tight">
+                Rp {totalCollectedMonth.toLocaleString('id-ID')}
+              </p>
+              <p className="text-[10px] text-emerald-200 font-medium mt-1">
+                {MONTHS_FULL[selectedMonth - 1]} {year}
+              </p>
             </div>
-            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{lunasCount}</p>
           </div>
-          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
-            <div className="flex items-center gap-1.5 text-amber-600">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Mencicil</h3>
+
+          {/* Total Pengeluaran */}
+          <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                  <TrendingDown className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Total Pengeluaran</span>
+              </div>
+              <p className="text-xl font-black text-white leading-tight">
+                Rp {totalExpensesMonth.toLocaleString('id-ID')}
+              </p>
+              <p className="text-[10px] text-zinc-400 font-medium mt-1">
+                {currentMonthExpenses.length} transaksi pengeluaran
+              </p>
             </div>
-            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{cicilanCount}</p>
           </div>
-          <div className="bg-white rounded-lg p-3 sm:p-4 border border-zinc-200 shadow-xs flex flex-col gap-1 sm:gap-2">
-            <div className="flex items-center gap-1.5 text-red-600">
-              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Belum Bayar</h3>
+
+          {/* Saldo Bersih */}
+          <div className="bg-zinc-900 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Wallet className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Saldo Bersih</span>
+              </div>
+              <p className={`text-xl font-black leading-tight ${saldoBersihMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                Rp {saldoBersihMonth.toLocaleString('id-ID')}
+              </p>
+              <p className="text-[10px] text-zinc-400 font-medium mt-1">
+                Pemasukan - Pengeluaran
+              </p>
             </div>
-            <p className="text-xl sm:text-2xl font-semibold text-zinc-900">{belumBayarCount}</p>
           </div>
-          <div className="bg-emerald-50 rounded-lg p-3 sm:p-4 border border-emerald-200 shadow-xs flex flex-col gap-1 sm:gap-2">
-            <div className="flex items-center gap-1.5 text-emerald-700">
-              <h3 className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Total Terkumpul</h3>
+        </div>
+
+        {/* Student Payment Status Cards */}
+        <div className="grid grid-cols-3 gap-3">
+          {/* Lunas */}
+          <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full opacity-80" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Lunas</span>
+              </div>
+              <p className="text-2xl font-black text-zinc-900">{lunasCount}</p>
+              <p className="text-[10px] text-emerald-600 font-medium mt-1">{lunasPercent}% dari total</p>
             </div>
-            <p className="text-lg sm:text-xl font-bold text-emerald-900">
-              Rp {totalCollectedMonth.toLocaleString('id-ID')}
-            </p>
-            <p className="text-[9px] sm:text-[10px] text-emerald-600">
-              {MONTHS_FULL[selectedMonth - 1]} {year}
-            </p>
+          </div>
+
+          {/* Mencicil */}
+          <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-amber-50 rounded-bl-full opacity-80" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Mencicil</span>
+              </div>
+              <p className="text-2xl font-black text-zinc-900">{cicilanCount}</p>
+              <p className="text-[10px] text-amber-600 font-medium mt-1">Dalam proses</p>
+            </div>
+          </div>
+
+          {/* Belum Bayar */}
+          <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full opacity-80" />
+            <div className="relative">
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center">
+                  <X className="w-3.5 h-3.5 text-red-600" />
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Belum</span>
+              </div>
+              <p className="text-2xl font-black text-zinc-900">{belumBayarCount}</p>
+              <p className="text-[10px] text-red-500 font-medium mt-1">Perlu ditagih</p>
+            </div>
           </div>
         </div>
 
         {/* Matrix Table */}
-        <div className="bg-white rounded-lg shadow-xs border border-zinc-200 overflow-hidden">
-          <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-zinc-200 flex items-center justify-between">
-            <p className="text-xs sm:text-sm font-semibold text-zinc-900">
-              Detail per Bulan — {MONTHS_FULL[selectedMonth - 1]} {year}
-            </p>
-            <p className="text-[11px] sm:text-xs text-zinc-500">{students?.length || 0} siswa</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-bold text-zinc-900">Matriks Pembayaran</p>
+              <p className="text-[11px] text-zinc-400 mt-0.5">{MONTHS_FULL[selectedMonth - 1]} {year}</p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-zinc-400">{totalStudents} siswa</span>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-xs sm:text-sm">
               <thead>
-                <tr className="bg-zinc-50 border-b border-zinc-200">
-                  <th className="text-left px-2 py-2 sm:px-4 sm:py-3 text-[10px] sm:text-xs font-semibold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200 min-w-[90px] sm:min-w-[140px]">
-                    Nama Siswa
+                <tr className="bg-zinc-50/80 border-b border-zinc-200">
+                  <th className="text-left px-2 py-2.5 sm:px-4 sm:py-3 text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-wider sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200 min-w-[90px] sm:min-w-[140px]">
+                    Siswa
                   </th>
                   {activeMonths.map(m => (
                     <th
                       key={m.value}
-                      className={`text-center px-0.5 py-1.5 sm:px-2 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider border-r border-zinc-100 last:border-0 min-w-[34px] sm:min-w-[52px] ${
-                        m.value === selectedMonth ? 'text-zinc-900 bg-zinc-100' : 'text-zinc-500'
+                      className={`text-center px-0.5 py-2 sm:px-2 sm:py-3 text-[10px] sm:text-xs font-bold uppercase tracking-wider border-r border-zinc-100 last:border-0 min-w-[34px] sm:min-w-[52px] ${
+                        m.value === selectedMonth ? 'text-zinc-900 bg-zinc-100' : 'text-zinc-400'
                       }`}
                     >
                       {m.label}
@@ -315,20 +405,23 @@ export default async function PublicRecapPage(props: PageProps) {
                       )}
                     </th>
                   ))}
-                  <th className="text-center px-1.5 py-1.5 sm:px-3 sm:py-3 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 min-w-[68px] sm:min-w-[100px]">
+                  <th className="text-center px-1.5 py-2.5 sm:px-3 sm:py-3 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border-l border-emerald-200 sticky right-0 z-10 min-w-[60px] sm:min-w-[90px]">
                     Total
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {students?.map((student) => {
+                {students?.map((student, idx) => {
                   const totalAllMonths = activeMonths.reduce((sum, m) => {
                     return sum + (matrix[student.id]?.[m.value]?.totalPaid || 0)
                   }, 0)
                   return (
-                    <tr key={student.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50 transition-colors">
-                      <td className="px-2 py-1.5 sm:px-4 sm:py-2 sticky left-0 z-10 border-r border-zinc-200 bg-white">
-                        <span className="font-medium text-xs sm:text-sm text-zinc-900 truncate max-w-[85px] sm:max-w-[120px] block">
+                    <tr
+                      key={student.id}
+                      className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50/80 transition-colors ${idx % 2 === 0 ? '' : 'bg-zinc-50/30'}`}
+                    >
+                      <td className="px-2 py-1 sm:px-4 sm:py-1.5 sticky left-0 z-10 border-r border-zinc-200 bg-white">
+                        <span className="font-semibold text-xs sm:text-sm text-zinc-800 truncate max-w-[85px] sm:max-w-[120px] block">
                           {student.name}
                         </span>
                       </td>
@@ -339,7 +432,7 @@ export default async function PublicRecapPage(props: PageProps) {
                           <td
                             key={m.value}
                             className={`border-r border-zinc-100 last:border-0 text-center align-middle p-0 ${
-                              m.value === selectedMonth ? 'bg-zinc-50/50' : ''
+                              m.value === selectedMonth ? 'bg-zinc-50/60' : ''
                             }`}
                           >
                             <StatusCell
@@ -354,19 +447,20 @@ export default async function PublicRecapPage(props: PageProps) {
                           </td>
                         )
                       })}
-                      <td className="px-1.5 py-1.5 sm:px-3 sm:py-2 text-center border-l border-emerald-200 bg-emerald-50/30">
-                        <span className={`text-[11px] sm:text-xs font-semibold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-400'}`}>
+                      <td className="px-1.5 py-1 sm:px-3 sm:py-1.5 text-center border-l border-emerald-200 bg-emerald-50/30 sticky right-0 z-10">
+                        <span className={`text-[10px] sm:text-xs font-bold ${totalAllMonths > 0 ? 'text-emerald-700' : 'text-zinc-300'}`}>
                           {totalAllMonths > 0 ? `Rp ${(totalAllMonths / 1000).toFixed(0)}k` : '—'}
                         </span>
                       </td>
                     </tr>
                   )
                 })}
+
                 {/* Footer total row */}
                 {students && students.length > 0 && (
                   <tr className="bg-zinc-50 border-t-2 border-zinc-200">
-                    <td className="px-2 py-2 sm:px-4 sm:py-2.5 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
-                      <span className="text-[10px] sm:text-xs font-bold text-zinc-700 uppercase tracking-wider">Total</span>
+                    <td className="px-2 py-2.5 sm:px-4 sticky left-0 z-10 bg-zinc-50 border-r border-zinc-200">
+                      <span className="text-[10px] sm:text-xs font-black text-zinc-600 uppercase tracking-wider">Total</span>
                     </td>
                     {activeMonths.map(m => {
                       const monthTotal = students.reduce((sum, s) => {
@@ -375,19 +469,19 @@ export default async function PublicRecapPage(props: PageProps) {
                       return (
                         <td
                           key={m.value}
-                          className={`border-r border-zinc-100 text-center py-1.5 sm:py-2.5 px-0.5 ${
+                          className={`border-r border-zinc-100 text-center py-2 px-0.5 ${
                             m.value === selectedMonth ? 'bg-zinc-100' : ''
                           }`}
                         >
-                          <span className={`text-[9px] sm:text-[10px] font-semibold ${monthTotal > 0 ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                          <span className={`text-[9px] sm:text-[10px] font-bold ${monthTotal > 0 ? 'text-zinc-600' : 'text-zinc-300'}`}>
                             {monthTotal > 0 ? `${(monthTotal / 1000).toFixed(0)}k` : '—'}
                           </span>
                         </td>
                       )
                     })}
-                    <td className="px-1.5 py-2 sm:px-3 sm:py-2.5 text-center border-l border-emerald-200 bg-emerald-50">
-                      <span className="text-[10px] sm:text-xs font-bold text-emerald-800">
-                        {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0) > 0 
+                    <td className="px-1.5 py-2 sm:px-3 text-center border-l border-emerald-200 bg-emerald-50 sticky right-0 z-10">
+                      <span className="text-[10px] sm:text-xs font-black text-emerald-700">
+                        {(payments?.reduce((sum, p) => sum + p.amount, 0) || 0) > 0
                           ? `Rp ${((payments?.reduce((sum, p) => sum + p.amount, 0) || 0) / 1000).toFixed(0)}k`
                           : '—'
                         }
@@ -395,9 +489,10 @@ export default async function PublicRecapPage(props: PageProps) {
                     </td>
                   </tr>
                 )}
+
                 {(!students || students.length === 0) && (
                   <tr>
-                    <td colSpan={14} className="px-6 py-10 text-center text-sm text-zinc-500">
+                    <td colSpan={14} className="px-6 py-12 text-center text-sm text-zinc-400">
                       Belum ada data siswa
                     </td>
                   </tr>
@@ -408,25 +503,71 @@ export default async function PublicRecapPage(props: PageProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 text-xs text-zinc-500 mt-4">
+        <div className="flex flex-wrap gap-3 text-xs text-zinc-500">
           <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 rounded flex items-center justify-center bg-emerald-50 border border-emerald-200">
+            <div className="w-5 h-5 rounded-md flex items-center justify-center bg-emerald-100 border border-emerald-200">
               <Check className="w-3 h-3 text-emerald-600" />
             </div>
-            <span>Lunas (10k ≤ 1 mgg / 15k &gt; 1 mgg)</span>
+            <span className="font-medium">Lunas</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 rounded flex items-center justify-center bg-amber-50 border border-amber-200">
+            <div className="w-5 h-5 rounded-md flex items-center justify-center bg-amber-100 border border-amber-200">
               <Clock className="w-3 h-3 text-amber-600" />
             </div>
-            <span>Mencicil</span>
+            <span className="font-medium">Mencicil</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 rounded flex items-center justify-center bg-zinc-100 border border-zinc-200">
+            <div className="w-5 h-5 rounded-md flex items-center justify-center bg-zinc-100 border border-zinc-200">
               <X className="w-3 h-3 text-zinc-400" />
             </div>
-            <span>Belum Bayar</span>
+            <span className="font-medium">Belum Bayar</span>
           </div>
+          <div className="flex items-center gap-1.5 ml-1 text-zinc-400">
+            <span>· Tap sel untuk detail</span>
+          </div>
+        </div>
+
+        {/* Rincian Pengeluaran */}
+        <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Receipt className="w-4 h-4 text-zinc-900" />
+              <div>
+                <p className="text-sm font-bold text-zinc-900">Rincian Pengeluaran</p>
+                <p className="text-[11px] text-zinc-400 mt-0.5">{MONTHS_FULL[selectedMonth - 1]} {year}</p>
+              </div>
+            </div>
+          </div>
+
+          {currentMonthExpenses.length === 0 ? (
+            <div className="py-8 text-center text-xs text-zinc-400">
+              Belum ada pengeluaran dicatat pada bulan {MONTHS_FULL[selectedMonth - 1]} {year}
+            </div>
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {currentMonthExpenses.map(exp => {
+                const cat = EXPENSE_CATEGORIES.find(c => c.value === exp.category)
+                return (
+                  <div key={exp.id} className="flex items-center justify-between px-4 py-3 text-xs sm:text-sm hover:bg-zinc-50 transition-colors">
+                    <div className="flex items-center gap-2.5">
+                      <Tag className="w-4 h-4 text-zinc-400 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-zinc-800">{exp.title}</p>
+                        <p className="text-[11px] text-zinc-400">{cat?.label ?? exp.category}{exp.note ? ` · ${exp.note}` : ''}</p>
+                      </div>
+                    </div>
+                    <span className="font-semibold text-zinc-900">
+                      -Rp {exp.amount.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                )
+              })}
+              <div className="px-4 py-2.5 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs font-bold text-zinc-800">
+                <span>Total Pengeluaran ({MONTHS_FULL[selectedMonth - 1]})</span>
+                <span>-Rp {totalExpensesMonth.toLocaleString('id-ID')}</span>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
